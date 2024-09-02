@@ -1,0 +1,32 @@
+###
+POST http://localhost:8080/api/v1/cliente
+Content-Type: application/json
+
+###
+GET http://localhost:8080/api/v1/cliente/{{id}}
+
+###
+GET http://localhost:8080/api/v1/cliente
+
+###
+GET http://localhost:8080/api/v1/cliente/detalhar-completo/{{id}}
+
+###
+PATCH http://localhost:8080/api/v1/cliente
+Content-Type: application/json
+
+{
+  "id": 0,
+  "nome": "",
+  "dataNascimento": "",
+  "cpf": "",
+  "email": "",
+  "numeroCNH": "",
+  "sexo": "MASCULINO",
+  "dataCreated": "",
+  "lastUpdated": ""
+}
+
+###
+DELETE http://localhost:8080/api/v1/cliente/{{id}}
+
