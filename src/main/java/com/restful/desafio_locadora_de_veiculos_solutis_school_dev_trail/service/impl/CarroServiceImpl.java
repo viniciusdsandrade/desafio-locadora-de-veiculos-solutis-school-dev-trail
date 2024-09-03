@@ -5,11 +5,11 @@ import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.car
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosDetalhamentoCarro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosListagemCarro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Carro;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.exception.DuplicateEntryException;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.repository.CarroRepository;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.service.CarroService;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.spec.CarroSpecs;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -46,7 +46,7 @@ public class CarroServiceImpl implements CarroService {
     @Schema(description = "Cadastra um novo carro.")
     public Carro cadastrarCarro(@Valid DadosCadastroCarro dadosCadastroCarro) {
         log.info("Iniciando cadastro do carro: {}", dadosCadastroCarro);
-        validarCamposDuplicados(dadosCadastroCarro);
+        validarCamposDuplicadosEmDadosCadastroCarro(dadosCadastroCarro);
         log.info("Campos validados com sucesso");
 
         Carro carro = new Carro(dadosCadastroCarro);
@@ -73,7 +73,7 @@ public class CarroServiceImpl implements CarroService {
         Carro carro = existeCarroPeloId(dadosAtualizarCarro.id());
         log.info("Carro encontrado para atualização: {}", carro);
 
-        validarCamposDuplicadosNoDtoAtualizacao(dadosAtualizarCarro, carro); // Verifica se há campos para atualização que não permitem duplicação
+        validarCamposDuplicadosEmDadosAtualizacaoCarro(dadosAtualizarCarro, carro); // Verifica se há campos para atualização que não permitem duplicação
         carro.atualizar(dadosAtualizarCarro);
         carroRepository.save(carro);
         log.info("Carro atualizado com sucesso: {}", carro);
@@ -250,7 +250,7 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Schema(description = "Verifica se há campos duplicados ao cadastrar um carro.")
-    private void validarCamposDuplicadosNoDtoAtualizacao(@Valid DadosAtualizacaoCarro dadosAtualizarCarro, Carro carroAtual) {
+    private void validarCamposDuplicadosEmDadosAtualizacaoCarro(@Valid DadosAtualizacaoCarro dadosAtualizarCarro, Carro carroAtual) {
         List<String> erroDuplicados = new ArrayList<>();
 
         if (dadosAtualizarCarro.placa() != null && !dadosAtualizarCarro.placa().equals(carroAtual.getPlaca()))
@@ -261,12 +261,12 @@ public class CarroServiceImpl implements CarroService {
 
         if (!erroDuplicados.isEmpty()) {
             log.warn("Campos duplicados ao atualizar: {}", erroDuplicados);
-            throw new EntityExistsException("Campos duplicados: " + String.join(", ", erroDuplicados));
+            throw new DuplicateEntryException("Campos duplicados: " + String.join(", ", erroDuplicados));
         }
     }
 
     @Schema(description = "Verifica se há campos duplicados ao cadastrar um carro.")
-    private void validarCamposDuplicados(@Valid DadosCadastroCarro dadosCadastroCarro) {
+    private void validarCamposDuplicadosEmDadosCadastroCarro(@Valid DadosCadastroCarro dadosCadastroCarro) {
         List<String> erroDuplicados = new ArrayList<>();
 
         verificarDuplicidade(dadosCadastroCarro.placa(), carroRepository.existsByPlaca(dadosCadastroCarro.placa()), "Placa", erroDuplicados);
@@ -274,7 +274,7 @@ public class CarroServiceImpl implements CarroService {
 
         if (!erroDuplicados.isEmpty()) {
             log.warn("Campos duplicados ao cadastrar: {}", erroDuplicados);
-            throw new EntityExistsException("Campos duplicados: " + String.join(", ", erroDuplicados));
+            throw new DuplicateEntryException("Campos duplicados: " + String.join(", ", erroDuplicados));
         }
     }
 

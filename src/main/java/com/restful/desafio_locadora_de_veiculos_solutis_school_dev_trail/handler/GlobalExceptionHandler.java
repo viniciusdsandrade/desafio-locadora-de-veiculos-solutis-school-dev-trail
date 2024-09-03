@@ -56,7 +56,6 @@ public class GlobalExceptionHandler {
     @Schema(description = "Manipula a exceção BadRequestException, lançada quando uma requisição malformada é recebida.")
     public ResponseEntity<List<ErrorDetails>> handleBadRequestException(BadRequestException exception,
                                                                         WebRequest webRequest) {
-
         ErrorDetails errorDetails = new ErrorDetails(
                 now(),
                 exception.getMessage(),
@@ -128,7 +127,6 @@ public class GlobalExceptionHandler {
     @Schema(description = "Manipula a exceção EntityNotFoundException, lançada quando uma entidade não é encontrada.")
     public ResponseEntity<List<ErrorDetails>> handleEntityNotFoundException(EntityNotFoundException exception,
                                                                             WebRequest webRequest) {
-
         ErrorDetails errorDetails = new ErrorDetails(
                 now(),
                 exception.getMessage(),
@@ -158,7 +156,6 @@ public class GlobalExceptionHandler {
     @Schema(description = "Manipula a exceção IllegalArgumentException, lançada quando um argumento inválido é passado.")
     public ResponseEntity<List<ErrorDetails>> handleIllegalArgumentException(IllegalArgumentException exception,
                                                                              WebRequest webRequest) {
-
         ErrorDetails errorDetails = new ErrorDetails(
                 now(),
                 exception.getMessage(),
