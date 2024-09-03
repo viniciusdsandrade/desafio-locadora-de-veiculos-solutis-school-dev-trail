@@ -29,7 +29,7 @@ public class CustomCorsConfiguration {
      *
      * @return Um novo filtro CORS com as configurações especificadas.
      */
-    @Bean
+    @Bean("corsFilter")
     @Schema(description = "Cria e configura o filtro CORS.")
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();

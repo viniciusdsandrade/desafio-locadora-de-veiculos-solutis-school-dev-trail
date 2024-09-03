@@ -44,8 +44,8 @@ public class Fabricante {
      * sejam removidos do banco de dados.
      * </p>
      */
-    @OneToMany(mappedBy = "fabricante", cascade = ALL, orphanRemoval = true, fetch = EAGER)
     @Setter(NONE)
+    @OneToMany(mappedBy = "fabricante", cascade = ALL, orphanRemoval = true, fetch = EAGER)
     @Schema(description = "Lista de modelos de carros produzidos pelo fabricante.")
     private List<ModeloCarro> modelos = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de modelo para existir
 

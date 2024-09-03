@@ -65,12 +65,15 @@ public class Aluguel {
     private BigDecimal valorTotalFinal;
 
     @Enumerated(STRING)
+    @Schema(description = "Status atual do aluguel.")
     private StatusAluguel statusAluguel;
 
     @Enumerated(STRING)
+    @Schema(description = "Tipo de pagamento utilizado para o aluguel.")
     private TipoPagamento tipoPagamento;
 
     @Enumerated(STRING)
+    @Schema(description = "Status do pagamento do aluguel.")
     private StatusPagamento statusPagamento;
 
     @Schema(description = "Data em que o pagamento foi efetuado.")

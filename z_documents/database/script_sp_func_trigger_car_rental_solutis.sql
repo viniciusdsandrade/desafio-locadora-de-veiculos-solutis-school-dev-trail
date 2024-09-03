@@ -2,17 +2,20 @@
 # CREATE DATABASE IF NOT EXISTS db_locadora_veiculos;
 USE db_locadora_veiculos;
 
-SELECT * FROM tb_motorista;
-
 DROP FUNCTION IF EXISTS calcular_valor_total_inicial;
 DROP FUNCTION IF EXISTS calcular_valor_total_final;
+DROP FUNCTION IF EXISTS verificar_alugueis_concluidos;
+
 DROP TRIGGER IF EXISTS calcular_valor_inicial_before_insert;
 DROP TRIGGER IF EXISTS calcular_valor_final_before_update;
 DROP TRIGGER IF EXISTS atualizar_disponibilidade_after_insert;
+DROP TRIGGER IF EXISTS atualizar_disponibilidade_diaria;
+
 DROP PROCEDURE IF EXISTS atualizar_disponibilidade_carro;
+DROP PROCEDURE IF EXISTS atualizar_disponibilidade_diaria;
+DROP PROCEDURE IF EXISTS inserir_acessorios_por_carro;
 
 DELIMITER //
-
 -- Stored Procedure para atualizar a disponibilidade do carro
 --
 -- Esta stored procedure atualiza o estado de disponibilidade de um carro na tabela tb_carro.
@@ -24,7 +27,6 @@ BEGIN
     SET disponivel = novo_estado
     WHERE id = carro_id;
 END //
-
 DELIMITER ;
 
 DELIMITER //
@@ -71,11 +73,9 @@ BEGIN
 
     RETURN valor_diaria * quantidade_dias;
 END //
-
 DELIMITER ;
 
 DELIMITER //
-
 -- Trigger para calcular o valorTotalParcial total inicial antes da inserção
 CREATE TRIGGER IF NOT EXISTS calcular_valor_inicial_before_insert
     BEFORE INSERT
@@ -87,7 +87,6 @@ BEGIN
                                          NEW.data_retirada,
                                          NEW.data_devolucao_prevista);
 END//
-
 -- Trigger para calcular o valorTotalParcial total final antes da atualização
 CREATE TRIGGER IF NOT EXISTS calcular_valor_final_before_update
     BEFORE UPDATE
@@ -117,6 +116,69 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+CREATE FUNCTION IF NOT EXISTS verificar_alugueis_concluidos(p_carro_id BIGINT UNSIGNED)
+    RETURNS BOOLEAN
+    DETERMINISTIC
+BEGIN
+    -- Verifica se existe algum aluguel para o carro com data_devolucao_efetiva menor ou igual a hoje e status 'FINALIZADO'
+    IF EXISTS(SELECT 1
+              FROM tb_aluguel
+              WHERE carro_id = p_carro_id
+                AND data_devolucao_efetiva <= CURDATE()
+                AND status_aluguel = 'FINALIZADO') THEN
+        RETURN FALSE; -- Existe aluguel concluído, carro indisponível
+    ELSE
+        RETURN TRUE; -- Não existe aluguel concluído, carro disponível
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER IF NOT EXISTS atualizar_disponibilidade_diaria
+    AFTER UPDATE
+    ON tb_aluguel
+    FOR EACH ROW
+BEGIN
+    -- Verifica se o aluguel foi finalizado e a data de devolução efetiva foi preenchida
+    IF OLD.status_aluguel != 'FINALIZADO' AND NEW.status_aluguel = 'FINALIZADO' AND
+       NEW.data_devolucao_efetiva IS NOT NULL THEN
+        -- Verifica se todos os aluguéis para o carro estão concluídos
+        IF verificar_alugueis_concluidos(NEW.carro_id) THEN
+            -- Define o carro como disponível
+            CALL atualizar_disponibilidade_carro(NEW.carro_id, TRUE);
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE inserir_acessorios_por_carro()
+BEGIN
+    DECLARE carro_id INT;
+    DECLARE acessorio_inicial INT;
+    DECLARE contador INT;
+
+    SET carro_id = 1;
+
+    WHILE carro_id <= 35 DO -- Loop para cada carro (IDs de 1 a 35)
+    SET acessorio_inicial = FLOOR(RAND() * 50) + 1; -- Acessório inicial aleatório (IDs de 1 a 55)
+    SET contador = 1;
+
+    WHILE contador <= 10 DO -- Loop para 10 acessórios por carro
+    INSERT INTO tb_carro_acessorio (id_carro, id_acessorio)
+    VALUES (carro_id, (acessorio_inicial + contador - 1) % 50 + 1); -- Insere o acessório, garantindo que o ID do acessório esteja entre 1 e 55
+
+    SET contador = contador + 1;
+        END WHILE;
+
+    SET carro_id = carro_id + 1;
+        END WHILE;
+END //
+DELIMITER ;
+
+-- Chama a procedure para inserir os acessórios
+CALL inserir_acessorios_por_carro();
 
 
 INSERT INTO tb_aluguel (data_pedido, data_retirada, data_devolucao_prevista, data_devolucao_efetiva, valor_total_inicial, valor_total_final, status_aluguel, tipo_pagamento, status_pagamento, data_pagamento, data_cancelamento, motorista_id, carro_id, apolice_seguro_id) VALUES ('2024-08-01', '2024-08-11', '2024-08-16', NULL, NULL, NULL, 'INCOMPLETO', NULL, NULL, NULL, NULL, 1, 1, 1);

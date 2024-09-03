@@ -41,7 +41,7 @@ public class ModeloCarro {
      * mas cada modelo tem um único fabricante.
      * </p>
      */
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "fabricante_id", nullable = false)
     @Schema(description = "Fabricante do modelo de carro.")
     private Fabricante fabricante;
