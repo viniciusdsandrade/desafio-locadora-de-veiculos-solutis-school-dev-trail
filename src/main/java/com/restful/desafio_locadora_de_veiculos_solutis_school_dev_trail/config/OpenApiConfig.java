@@ -17,7 +17,7 @@ public class OpenApiConfig {
     @Value("${api.version}")
     private String apiVersion;
 
-    @Bean
+    @Bean("customOpenAPI")
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
@@ -32,7 +32,7 @@ public class OpenApiConfig {
                 );
     }
 
-    @Bean
+    @Bean("publicApi")
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("public")

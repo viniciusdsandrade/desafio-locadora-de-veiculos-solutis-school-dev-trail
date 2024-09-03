@@ -50,7 +50,7 @@ public class BigDecimalCurrencySerializer extends JsonSerializer<BigDecimal> {
      */
     @Override
     public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        NumberFormat formatter = getCurrencyInstance(Locale.of("pt", "BR"));
+        NumberFormat formatter = getCurrencyInstance(new Locale("pt", "BR"));
         String formattedValue = formatter.format(value);
         gen.writeString(formattedValue);
     }

@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS db_car_rental_solutis;
-CREATE DATABASE IF NOT EXISTS db_car_rental_solutis;
-USE db_car_rental_solutis;
+# DROP DATABASE IF EXISTS db_locadora_veiculos;
+# CREATE DATABASE IF NOT EXISTS db_locadora_veiculos;
+USE db_locadora_veiculos;
 
 SELECT * FROM tb_motorista;
 

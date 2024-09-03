@@ -1,4 +1,4 @@
-USE db_car_rental_solutis;
+USE db_locadora_veiculos;
 
 INSERT INTO tb_acessorio (descricao) VALUES ('GPS');
 INSERT INTO tb_acessorio (descricao) VALUES ('AR_CONDICIONADO');

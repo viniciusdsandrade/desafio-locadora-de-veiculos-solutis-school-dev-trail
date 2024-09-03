@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import java.util.Arrays;
+
+
+import static java.util.Arrays.asList;
 
 /**
  * Configura o CORS (Cross-Origin Resource Sharing) para a aplicação.
@@ -31,9 +33,9 @@ public class CustomCorsConfiguration {
     @Schema(description = "Cria e configura o filtro CORS.")
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080"));
-        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedOrigins(asList("http://localhost:3000", "http://localhost:8080"));
+        config.setAllowedHeaders(asList("Origin", "Content-Type", "Accept"));
+        config.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
