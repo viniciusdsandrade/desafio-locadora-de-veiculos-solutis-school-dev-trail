@@ -33,8 +33,12 @@ public interface MotoristaService {
     void deletarMotorista(Long id);
 
     @Transactional
-    @Schema(description = "Ativa um motorista.")
+    @Schema(description = "Desativa um motorista.")
     void desativarMotorista(Long id);
+
+    @Transactional
+    @Schema(description = "Ativa um motorista.")
+    void ativarMotorista(Long id);
 
     @Schema(description = "Lista todos os motoristas cadastrados.")
     Page<DadosListagemMotorista> listar(Pageable paginacao);

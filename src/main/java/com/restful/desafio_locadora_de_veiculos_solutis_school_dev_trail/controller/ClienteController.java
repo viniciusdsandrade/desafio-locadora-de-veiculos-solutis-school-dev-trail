@@ -156,7 +156,7 @@ public class ClienteController {
     }
 
     @Transactional
-    @PatchMapping("/{id}")
+    @PatchMapping("/desativar/{id}")
     @Operation(summary = "Desativar um cliente, impedindo-o de realizar novos aluguéis")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Cliente desativado com sucesso."),
@@ -164,6 +164,18 @@ public class ClienteController {
     })
     public ResponseEntity<Void> desativar(@PathVariable Long id) {
         motoristaService.desativarMotorista(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Transactional
+    @PatchMapping("/ativar/{id}")
+    @Operation(summary = "Ativar um cliente, permitindo-o de realizar novos aluguéis")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Cliente ativado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
+    public ResponseEntity<Void> ativar(@PathVariable Long id) {
+        motoristaService.ativarMotorista(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -114,6 +114,21 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
+    @Transactional
+    @Schema(description = "Ativa um motorista pelo ID.")
+    public void ativarMotorista(Long id) {
+        log.info("Ativando motorista com ID: {}", id);
+
+        Motorista motorista = existeMotoristaPeloId(id);
+        log.info("Motorista encontrado para ativação: {}", motorista);
+
+        motorista.ativar();
+
+        motoristaRepository.save(motorista);
+        log.info("Motorista ativado com sucesso: {}", motorista);
+    }
+
+    @Override
     @Schema(description = "Lista motoristas com paginação.")
     public Page<DadosListagemMotorista> listar(Pageable paginacao) {
         log.info("Listando motoristas com paginação: {}", paginacao);
