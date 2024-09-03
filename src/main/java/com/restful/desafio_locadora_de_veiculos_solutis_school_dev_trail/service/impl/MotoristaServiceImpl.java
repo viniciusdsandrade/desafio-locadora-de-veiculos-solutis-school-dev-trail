@@ -18,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,17 +47,31 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Override
     @Transactional
     @Schema(description = "Cadastra um novo motorista.")
-    public Motorista cadastrarMotorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
-        log.info("Iniciando cadastro do motorista: {}", dadosCadastroMotorista);
-        validarCamposDuplicados(dadosCadastroMotorista);
+    public Motorista cadastrarMotorista(@Valid DadosCadastroMotorista dados) {
+        log.info("Iniciando cadastro do motorista: {}", dados);
+        validarCamposDuplicados(dados);
         log.info("Campos únicos validados com sucesso");
 
-        Motorista motorista = new Motorista(dadosCadastroMotorista);
+        Motorista motorista = new Motorista(dados);
         motorista.ativar();
+
+        processarFoto(dados.foto(), motorista);
+
         motoristaRepository.save(motorista);
 
         log.info("Motorista cadastrado com sucesso: {}", motorista);
         return motorista;
+    }
+
+    private void processarFoto(MultipartFile foto, Motorista motorista) {
+        if (foto != null && !foto.isEmpty()) {
+            try {
+                motorista.adicionarFoto(foto.getBytes());
+            } catch (IOException e) {
+                log.error("Erro ao processar a foto: {}", e.getMessage());
+                throw new RuntimeException("Erro ao processar a foto", e);
+            }
+        }
     }
 
     @Override

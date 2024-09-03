@@ -42,6 +42,11 @@ public abstract class Pessoa {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Lob
+    @Schema(description = "Foto da pessoa.")
+    @Column(columnDefinition = "LONGBLOB DEFAULT NULL")
+    private byte[] foto;
+
     @Column(nullable = false)
     @Schema(description = "Nome completo da pessoa.")
     private String nome;
@@ -79,6 +84,10 @@ public abstract class Pessoa {
     @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
 
+    public void adicionarFoto(byte[] bytes) {
+        this.foto = bytes;
+    }
+
     public void desativar() {
         this.ativo = false;
         this.lastUpdated = now();
@@ -109,4 +118,6 @@ public abstract class Pessoa {
     public int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+
 }

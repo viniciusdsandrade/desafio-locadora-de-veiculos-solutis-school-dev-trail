@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/api/v1/cliente")
@@ -38,7 +39,7 @@ public class ClienteController {
         this.motoristaService = motoristaService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MULTIPART_FORM_DATA_VALUE)
     @Transactional
     @Operation(summary = "Cadastrar um novo cliente", description = "Cria um novo cliente com os dados fornecidos.")
     @ApiResponses(value = {
@@ -46,7 +47,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "400", description = "Dados de cadastro inválidos.")
     })
     public ResponseEntity<DadosListagemMotorista> cadastrar(
-            @RequestBody @Valid DadosCadastroMotorista dadosCadastroMotorista,
+            @ModelAttribute @Valid DadosCadastroMotorista dadosCadastroMotorista,
             UriComponentsBuilder uriBuilder
     ) {
         var motorista = motoristaService.cadastrarMotorista(dadosCadastroMotorista);

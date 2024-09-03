@@ -4,19 +4,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.Sexo;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.validation.annotations.Adulto;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.validation.annotations.CNH;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.validation.annotations.Picture;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
-import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 
 @Schema(description = "Dados necessários para cadastrar um novo motorista.")
 public record DadosCadastroMotorista(
@@ -54,14 +51,8 @@ public record DadosCadastroMotorista(
         @Schema(description = "Sexo do motorista.")
         Sexo sexo,
 
-        @CreationTimestamp
-        @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-        @Schema(description = "Data e hora de criação do registro do motorista.", accessMode = READ_ONLY)
-        LocalDateTime dataCreated,
-
-        @UpdateTimestamp
-        @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = READ_WRITE)
-        LocalDateTime lastUpdated
+        @Picture(message = "A foto deve ser uma imagem JPEG ou PNG e deve ter no máximo 1MB.")
+        @Schema(description = "Foto do motorista.", type = "string", format = "binary")
+        MultipartFile foto
 ) {
 }
