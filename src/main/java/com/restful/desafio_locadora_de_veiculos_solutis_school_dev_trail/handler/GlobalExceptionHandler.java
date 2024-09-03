@@ -3,6 +3,7 @@ package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.handle
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.exception.DuplicateEntryException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,9 +33,39 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  * @see RestControllerAdvice
  * @see ExceptionHandler
  */
-@RestControllerAdvice("br.com.solutis.squad13.car_rental_challenge_solutis_school_dev_trail.controller")
+@RestControllerAdvice(basePackages = "com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.controller")
 @Schema(description = "Classe responsável por tratar exceções globalmente na aplicação.")
 public class GlobalExceptionHandler {
+
+    /**
+     * Manipula a exceção {@link BadRequestException}, que é lançada quando uma requisição malformada
+     * ou inválida é recebida pelo servidor.
+     * <p>
+     * Esta exceção indica que a requisição não pôde ser processada devido a um erro na sintaxe
+     * ou no formato dos dados fornecidos. O metodo encapsula os detalhes do erro em um objeto
+     * {@link ErrorDetails} e retorna uma resposta com status HTTP 400 (Bad Request),
+     * indicando que a requisição não pôde ser entendida ou processada pelo servidor.
+     * </p>
+     *
+     * @param exception  A exceção de requisição malformada, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 400 (Bad Request).
+     */
+    @ExceptionHandler(BadRequestException.class)
+    @Schema(description = "Manipula a exceção BadRequestException, lançada quando uma requisição malformada é recebida.")
+    public ResponseEntity<List<ErrorDetails>> handleBadRequestException(BadRequestException exception,
+                                                                        WebRequest webRequest) {
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "BAD_REQUEST"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), BAD_REQUEST);
+    }
 
     /**
      * Manipula a exceção {@link MethodArgumentNotValidException}, que é lançada quando ocorre um erro de validação
@@ -42,11 +73,11 @@ public class GlobalExceptionHandler {
      * <p>
      * Esta exceção é comum em operações onde os dados fornecidos pelo cliente, através do corpo da requisição
      * ou parâmetros de URL,  não atendem aos requisitos de validação definidos pelas anotações do Bean Validation,
-     * como `@NotNull`, `@NotBlank`, `@Size`, etc.
+     * como @NotNull, @NotBlank, @Size, etc.
      * </p>
      * <p>
      * O metodo captura a exceção, extrai os detalhes dos erros de validação e os encapsula em uma lista de
-     * objetos {@link ValidationErrorDetails}. Cada objeto `ValidationErrorDetails` contém informações específicas
+     * objetos {@link ValidationErrorDetails}. Cada objeto ValidationErrorDetails contém informações específicas
      * sobre um erro de validação, como o campo que causou o erro, a mensagem de erro e o código de erro.
      * </p>
      * <p>
@@ -95,8 +126,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(EntityNotFoundException.class)
     @Schema(description = "Manipula a exceção EntityNotFoundException, lançada quando uma entidade não é encontrada.")
-    public ResponseEntity<List<ErrorDetails>> handleResourceNotFoundException(EntityNotFoundException exception,
-                                                                              WebRequest webRequest) {
+    public ResponseEntity<List<ErrorDetails>> handleEntityNotFoundException(EntityNotFoundException exception,
+                                                                            WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(
                 now(),

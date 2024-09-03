@@ -45,7 +45,7 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Override
     @Transactional
     @Schema(description = "Cadastra um novo motorista.")
-    public Motorista cadastrarMotorista(DadosCadastroMotorista dadosCadastroMotorista) {
+    public Motorista cadastrarMotorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
         log.info("Iniciando cadastro do motorista: {}", dadosCadastroMotorista);
         validarCamposDuplicados(dadosCadastroMotorista);
         log.info("Campos únicos validados com sucesso");

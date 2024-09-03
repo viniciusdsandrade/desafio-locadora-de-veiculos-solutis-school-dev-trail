@@ -84,7 +84,6 @@ public class ClienteController {
         return ResponseEntity.ok(new DadosDetalhamentoMotorista(motorista));
     }
 
-
     @GetMapping("/pesquisar-and")
     @Operation(summary = "Pesquisar motoristas por critérios (AND)", description = "Retorna uma lista paginada de motoristas que correspondem a todos os critérios de pesquisa, utilizando junção AND.")
     @ApiResponse(responseCode = "200", description = "Lista de motoristas encontrados.")

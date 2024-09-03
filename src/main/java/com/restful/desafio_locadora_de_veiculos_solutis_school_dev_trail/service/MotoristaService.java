@@ -19,7 +19,7 @@ public interface MotoristaService {
 
     @Transactional
     @Schema(description = "Cadastra um novo motorista.")
-    Motorista cadastrarMotorista(DadosCadastroMotorista motorista);
+    Motorista cadastrarMotorista(@Valid DadosCadastroMotorista motorista);
 
     @Schema(description = "Busca um motorista pelo seu ID.")
     Motorista buscarPorId(Long id);

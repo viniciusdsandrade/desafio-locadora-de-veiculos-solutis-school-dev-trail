@@ -43,7 +43,7 @@ public class CarroController {
             @ApiResponse(responseCode = "400", description = "Dados de cadastro inválidos.")
     })
     public ResponseEntity<DadosListagemCarro> cadastrar(
-            @RequestBody DadosCadastroCarro dadosCadastroCarro,
+            @RequestBody @Valid DadosCadastroCarro dadosCadastroCarro,
             UriComponentsBuilder uriBuilder
     ) {
         var carro = carroService.cadastrarCarro(dadosCadastroCarro);

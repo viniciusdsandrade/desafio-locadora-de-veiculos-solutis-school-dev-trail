@@ -19,7 +19,7 @@ public interface CarroService {
 
     @Transactional
     @Schema(description = "Cadastra um carro.")
-    Carro cadastrarCarro(DadosCadastroCarro dadosCadastroCarro);
+    Carro cadastrarCarro(@Valid DadosCadastroCarro dadosCadastroCarro);
 
     @Schema(description = "Busca um carro pelo seu identificador.")
     Carro buscarPorId(Long id);
