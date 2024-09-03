@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.spec.CarroSpecs.temAcessorios;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.data.jpa.domain.Specification.where;
 
@@ -142,7 +141,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Schema(description = "Pesquisa carros com base em critérios.")
-    public Page<DadosDetalhamentoCarro> pesquisarCarros(
+    public Page<DadosDetalhamentoCarro> pesquisarCarrosAnd(
             String nome,
             String placa,
             String chassi,
@@ -171,31 +170,83 @@ public class CarroServiceImpl implements CarroService {
 
         Specification<Carro> spec = where(null);
 
-        spec = addSpecificationIfNotNull(spec, nome, CarroSpecs::nomeContains);
-        spec = addSpecificationIfNotNull(spec, placa, CarroSpecs::placaEquals);
-        spec = addSpecificationIfNotNull(spec, chassi, CarroSpecs::chassiEquals);
-        spec = addSpecificationIfNotNull(spec, cor, CarroSpecs::corEquals);
-        spec = addSpecificationIfNotNull(spec, disponivel, CarroSpecs::disponivelEquals);
-        spec = addSpecificationIfNotNull(spec, valorDiariaMin, CarroSpecs::valorDiariaGreaterThanOrEqual);
-        spec = addSpecificationIfNotNull(spec, valorDiariaMax, CarroSpecs::valorDiariaLessThanOrEqual);
-        spec = addSpecificationIfNotNull(spec, modeloDescricao, CarroSpecs::modeloDescricaoContains);
-        spec = addSpecificationIfNotNull(spec, fabricanteNome, CarroSpecs::fabricanteNomeContains);
-        spec = addSpecificationIfNotNull(spec, categoriaNome, CarroSpecs::categoriaNomeEquals);
+        spec = addSpecification(spec, nome, CarroSpecs::nomeContains, true);
+        spec = addSpecification(spec, placa, CarroSpecs::placaEquals, true);
+        spec = addSpecification(spec, chassi, CarroSpecs::chassiEquals, true);
+        spec = addSpecification(spec, cor, CarroSpecs::corEquals, true);
+        spec = addSpecification(spec, disponivel, CarroSpecs::disponivelEquals, true);
+        spec = addSpecification(spec, valorDiariaMin, CarroSpecs::valorDiariaGreaterThanOrEqual, true);
+        spec = addSpecification(spec, valorDiariaMax, CarroSpecs::valorDiariaLessThanOrEqual, true);
+        spec = addSpecification(spec, modeloDescricao, CarroSpecs::modeloDescricaoContains, true);
+        spec = addSpecification(spec, fabricanteNome, CarroSpecs::fabricanteNomeContains, true);
+        spec = addSpecification(spec, categoriaNome, CarroSpecs::categoriaNomeEquals, true);
 
-        if (acessoriosNomes != null && !acessoriosNomes.isEmpty()) spec = spec.and(temAcessorios(acessoriosNomes));
+        if (acessoriosNomes != null && !acessoriosNomes.isEmpty())
+            spec = addSpecification(spec, acessoriosNomes, CarroSpecs::temAcessorios, true);
 
         Page<DadosDetalhamentoCarro> resultados = carroRepository.findAll(spec, paginacao).map(DadosDetalhamentoCarro::new);
         log.info("Pesquisa de carros concluída. Número de resultados encontrados: {}", resultados.getTotalElements());
         return resultados;
     }
 
-    @Schema(description = "Adiciona uma especificação à especificação atual se o valor não for nulo.")
-    private <T> Specification<Carro> addSpecificationIfNotNull(
+    @Override
+    @Schema(description = "Pesquisa carros com base em critérios utilizando OR.")
+    public Page<DadosDetalhamentoCarro> pesquisarCarrosOr(
+            String nome,
+            String placa,
+            String chassi,
+            String cor,
+            Boolean disponivel,
+            BigDecimal valorDiariaMin,
+            BigDecimal valorDiariaMax,
+            String modeloDescricao,
+            String fabricanteNome,
+            String categoriaNome,
+            List<String> acessoriosNomes,
+            Pageable paginacao
+    ) {
+        log.info("Iniciando pesquisa de carros com os seguintes critérios (OR):");
+        log.info("Nome: {}", nome);
+        log.info("Placa: {}", placa);
+        log.info("Chassi: {}", chassi);
+        log.info("Cor: {}", cor);
+        log.info("Disponível: {}", disponivel);
+        log.info("Valor da diária mínimo: {}", valorDiariaMin);
+        log.info("Valor da diária máximo: {}", valorDiariaMax);
+        log.info("Descrição do modelo: {}", modeloDescricao);
+        log.info("Nome do fabricante: {}", fabricanteNome);
+        log.info("Nome da categoria: {}", categoriaNome);
+        log.info("Nomes dos acessórios: {}", acessoriosNomes);
+
+        Specification<Carro> spec = where(null);
+
+        spec = addSpecification(spec, nome, CarroSpecs::nomeContains, false);
+        spec = addSpecification(spec, placa, CarroSpecs::placaEquals, false);
+        spec = addSpecification(spec, chassi, CarroSpecs::chassiEquals, false);
+        spec = addSpecification(spec, cor, CarroSpecs::corEquals, false);
+        spec = addSpecification(spec, disponivel, CarroSpecs::disponivelEquals, false);
+        spec = addSpecification(spec, valorDiariaMin, CarroSpecs::valorDiariaGreaterThanOrEqual, false);
+        spec = addSpecification(spec, valorDiariaMax, CarroSpecs::valorDiariaLessThanOrEqual, false);
+        spec = addSpecification(spec, modeloDescricao, CarroSpecs::modeloDescricaoContains, false);
+        spec = addSpecification(spec, fabricanteNome, CarroSpecs::fabricanteNomeContains, false);
+        spec = addSpecification(spec, categoriaNome, CarroSpecs::categoriaNomeEquals, false);
+
+        if (acessoriosNomes != null && !acessoriosNomes.isEmpty())
+            spec = addSpecification(spec, acessoriosNomes, CarroSpecs::temAcessorios, false);
+
+        Page<DadosDetalhamentoCarro> resultados = carroRepository.findAll(spec, paginacao).map(DadosDetalhamentoCarro::new);
+        log.info("Pesquisa de carros concluída (OR). Número de resultados encontrados: {}", resultados.getTotalElements());
+        return resultados;
+    }
+
+    @Schema(description = "Adiciona uma especificação à especificação atual com base no tipo de junção (AND ou OR).")
+    private <T> Specification<Carro> addSpecification(
             Specification<Carro> spec,
             T value,
-            Function<T, Specification<Carro>> specBuilder
+            Function<T, Specification<Carro>> specBuilder,
+            boolean isAnd
     ) {
-        return value != null ? spec.and(specBuilder.apply(value)) : spec;
+        return value != null ? (isAnd ? spec.and(specBuilder.apply(value)) : spec.or(specBuilder.apply(value))) : spec;
     }
 
     @Schema(description = "Verifica se há campos duplicados ao cadastrar um carro.")

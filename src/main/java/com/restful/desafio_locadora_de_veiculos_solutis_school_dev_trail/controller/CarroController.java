@@ -43,7 +43,7 @@ public class CarroController {
             @ApiResponse(responseCode = "400", description = "Dados de cadastro inválidos.")
     })
     public ResponseEntity<DadosListagemCarro> cadastrar(
-            @RequestBody @Valid DadosCadastroCarro dadosCadastroCarro,
+            @RequestBody DadosCadastroCarro dadosCadastroCarro,
             UriComponentsBuilder uriBuilder
     ) {
         var carro = carroService.cadastrarCarro(dadosCadastroCarro);
@@ -66,15 +66,7 @@ public class CarroController {
     @Operation(summary = "Listar carros", description = "Retorna uma lista paginada de carros.")
     @ApiResponse(responseCode = "200", description = "Lista de carros.")
     public ResponseEntity<Page<DadosListagemCarro>> listar(
-            @PageableDefault(size = 20, sort = {"modelo"}) Pageable paginacao,
-            @RequestParam(required = false) String modelo,
-            @RequestParam(required = false) String fabricante,
-            @RequestParam(required = false) String categoria,
-            @RequestParam(required = false) String cor,
-            @RequestParam(required = false) String placa,
-            @RequestParam(required = false) String chassi,
-            @RequestParam(required = false) BigDecimal valorDiariaMin,
-            @RequestParam(required = false) BigDecimal valorDiariaMax
+            @PageableDefault(size = 20, sort = {"modelo"}) Pageable paginacao
     ) {
         var carros = carroService.listar(paginacao);
         return ResponseEntity.ok(carros);
@@ -91,10 +83,10 @@ public class CarroController {
         return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
     }
 
-    @GetMapping("/pesquisar")
+    @GetMapping("/pesquisar-and")
     @Operation(summary = "Pesquisar carros por critérios", description = "Retorna uma lista paginada de carros que correspondem aos critérios de pesquisa.")
     @ApiResponse(responseCode = "200", description = "Lista de carros encontrados.")
-    public ResponseEntity<Page<DadosDetalhamentoCarro>> pesquisarCarros(
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> pesquisarCarrosAnd(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String placa,
             @RequestParam(required = false) String chassi,
@@ -108,7 +100,42 @@ public class CarroController {
             @RequestParam(required = false) List<String> acessoriosNomes,
             @PageableDefault(size = 5) Pageable paginacao
     ) {
-        Page<DadosDetalhamentoCarro> carros = carroService.pesquisarCarros(
+        Page<DadosDetalhamentoCarro> carros = carroService.pesquisarCarrosAnd(
+                nome,
+                placa,
+                chassi,
+                cor,
+                disponivel,
+                valorDiariaMin,
+                valorDiariaMax,
+                modeloDescricao,
+                fabricanteNome,
+                categoriaNome,
+                acessoriosNomes,
+                paginacao
+        );
+
+        return ResponseEntity.ok(carros);
+    }
+
+    @GetMapping("/pesquisar-or")
+    @Operation(summary = "Pesquisar carros por critérios com OR", description = "Retorna uma lista paginada de carros que correspondem a qualquer um dos critérios de pesquisa utilizando OR.")
+    @ApiResponse(responseCode = "200", description = "Lista de carros encontrados.")
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> pesquisarCarrosOr(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String placa,
+            @RequestParam(required = false) String chassi,
+            @RequestParam(required = false) String cor,
+            @RequestParam(required = false) Boolean disponivel,
+            @RequestParam(required = false) BigDecimal valorDiariaMin,
+            @RequestParam(required = false) BigDecimal valorDiariaMax,
+            @RequestParam(required = false) String modeloDescricao,
+            @RequestParam(required = false) String fabricanteNome,
+            @RequestParam(required = false) String categoriaNome,
+            @RequestParam(required = false) List<String> acessoriosNomes,
+            @PageableDefault(size = 5) Pageable paginacao
+    ) {
+        Page<DadosDetalhamentoCarro> carros = carroService.pesquisarCarrosOr(
                 nome,
                 placa,
                 chassi,

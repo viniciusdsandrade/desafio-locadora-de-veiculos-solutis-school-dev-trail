@@ -19,7 +19,7 @@ public interface MotoristaService {
 
     @Transactional
     @Schema(description = "Cadastra um novo motorista.")
-    Motorista cadastrarMotorista(@Valid DadosCadastroMotorista motorista);
+    Motorista cadastrarMotorista(DadosCadastroMotorista motorista);
 
     @Schema(description = "Busca um motorista pelo seu ID.")
     Motorista buscarPorId(Long id);
@@ -39,22 +39,21 @@ public interface MotoristaService {
     @Schema(description = "Lista todos os motoristas cadastrados.")
     Page<DadosListagemMotorista> listar(Pageable paginacao);
 
-    /**
-     * Pesquisa motoristas com base nos filtros informados.
-     *
-     * @param nome           O nome do motorista a ser pesquisado.
-     * @param email          O email do motorista a ser pesquisado.
-     * @param cpf            O CPF do motorista a ser pesquisado.
-     * @param dataNascimento A data de nascimento do motorista a ser pesquisada.
-     * @param numeroCNH      O número da CNH do motorista a ser pesquisado.
-     * @param sexo           O sexo do motorista a ser pesquisado.
-     * @param ativo          O status ativo do motorista a ser pesquisado.
-     * @param placasAlugueis A lista de placas dos carros alugados pelos motoristas a serem pesquisados.
-     * @param paginacao      As informações de paginação da pesquisa.
-     * @return Uma página de {@link DadosDetalhamentoMotorista} contendo os motoristas que atendem aos critérios de pesquisa.
-     */
-    @Schema(description = "Pesquisa motoristas com base nos filtros informados.")
-    Page<DadosDetalhamentoMotorista> pesquisarMotoristas(
+    @Schema(description = "Pesquisa motoristas com base nos filtros informados, usando junção AND.")
+    Page<DadosDetalhamentoMotorista> pesquisarMotoristasAnd(
+            String nome,
+            String email,
+            String cpf,
+            LocalDate dataNascimento,
+            String numeroCNH,
+            String sexo,
+            Boolean ativo,
+            List<String> placasAlugueis,
+            Pageable paginacao
+    );
+
+    @Schema(description = "Pesquisa motoristas com base nos filtros informados, usando junção OR.")
+    Page<DadosDetalhamentoMotorista> pesquisarMotoristasOr(
             String nome,
             String email,
             String cpf,

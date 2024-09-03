@@ -24,7 +24,7 @@ public class OpenApiConfig {
                         .title("API para Gerenciamento de Aluguel de Veículos")
                         .description("Solutis School Dev Trail - Nivelamento - 2024")
                         .version(apiVersion)
-                        .license(new License().name("Licença").url("https://github.com/viniciusdsandrade/desafio-locadora-de-veiculos-solutis-school-dev-trail"))
+                        .license(new License().url("https://github.com/viniciusdsandrade/desafio-locadora-de-veiculos-solutis-school-dev-trail"))
                         .contact(new Contact()
                                 .name("Linkedin")
                                 .url("https://www.linkedin.com/in/viniciusdsandrade/"))

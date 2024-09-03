@@ -49,7 +49,6 @@ import java.time.LocalDateTime;
 @Getter
 @Schema(description = "Detalhes de um erro de validação ocorrido durante o processamento de uma requisição.")
 public class ValidationErrorDetails extends ErrorDetails {
-    @Schema(description = "O nome do campo que falhou na validação.")
     private String field;
 
     /**

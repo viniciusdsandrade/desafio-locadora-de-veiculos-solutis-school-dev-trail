@@ -14,6 +14,7 @@ public class AdultoValidator implements ConstraintValidator<Adulto, LocalDate> {
     public AdultoValidator() {}
 
     @Override
+    @Schema(description = "Inicializa o validador.")
     public void initialize(Adulto constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }

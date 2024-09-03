@@ -24,17 +24,14 @@ public record DadosAtualizacaoCarro(
         @Schema(description = "Nome do modelo do carro.", example = "Corolla")
         String nome,
 
-        @NotBlank(message = "A placa é obrigatória")
         @Pattern(regexp = "[A-Z]{3}-\\d{4}", message = "A placa deve seguir o formato ABC-1234")
         @Schema(description = "Placa do carro.", example = "ABC-1234")
         String placa,
 
-        @NotBlank(message = "O chassi é obrigatório")
         @Size(min = 17, max = 17, message = "O chassi deve ter 17 caracteres")
         @Schema(description = "Chassi do carro.", example = "1HGBH41JXMN109186")
         String chassi,
 
-        @NotBlank(message = "A cor é obrigatória")
         @Schema(description = "Cor do carro.", example = "Preto")
         String cor,
 
@@ -43,12 +40,10 @@ public record DadosAtualizacaoCarro(
         @Schema(description = "Valor da diária do aluguel do carro.", example = "150.00")
         BigDecimal valorDiario,
 
-        @NotNull(message = "A lista de acessórios é obrigatória")
         @NotEmpty(message = "A lista de acessórios não pode estar vazia")
         @Schema(description = "Lista de acessórios do carro.")
         List<Acessorio> acessorio,
 
-        @NotNull(message = "O modelo do carro é obrigatório")
         @Schema(description = "Modelo do carro.")
         ModeloCarro modelo,
 

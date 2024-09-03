@@ -6,6 +6,7 @@ import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.mot
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.service.MotoristaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +31,7 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 @Tag(name = "Cliente Controller", description = "Controller para gerenciamento de clientes (motoristas)")
 public class ClienteController {
 
+    @Schema(description = "Controller para gerenciamento de clientes (motoristas).")
     private final MotoristaService motoristaService;
 
     public ClienteController(MotoristaService motoristaService) {
@@ -82,10 +84,11 @@ public class ClienteController {
         return ResponseEntity.ok(new DadosDetalhamentoMotorista(motorista));
     }
 
-    @GetMapping("/pesquisar")
-    @Operation(summary = "Pesquisar motoristas por critérios", description = "Retorna uma lista paginada de motoristas que correspondem aos critérios de pesquisa.")
+
+    @GetMapping("/pesquisar-and")
+    @Operation(summary = "Pesquisar motoristas por critérios (AND)", description = "Retorna uma lista paginada de motoristas que correspondem a todos os critérios de pesquisa, utilizando junção AND.")
     @ApiResponse(responseCode = "200", description = "Lista de motoristas encontrados.")
-    public ResponseEntity<Page<DadosDetalhamentoMotorista>> pesquisarMotoristas(
+    public ResponseEntity<Page<DadosDetalhamentoMotorista>> pesquisarMotoristasAnd(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String cpf,
@@ -96,7 +99,36 @@ public class ClienteController {
             @RequestParam(required = false) List<String> placasAlugueis,
             @PageableDefault(size = 5) Pageable paginacao
     ) {
-        Page<DadosDetalhamentoMotorista> motoristas = motoristaService.pesquisarMotoristas(
+        Page<DadosDetalhamentoMotorista> motoristas = motoristaService.pesquisarMotoristasAnd(
+                nome,
+                email,
+                cpf,
+                dataNascimento,
+                numeroCNH,
+                sexo,
+                ativo,
+                placasAlugueis,
+                paginacao
+        );
+
+        return ResponseEntity.ok(motoristas);
+    }
+
+    @GetMapping("/pesquisar-or")
+    @Operation(summary = "Pesquisar motoristas por critérios (OR)", description = "Retorna uma lista paginada de motoristas que correspondem a qualquer um dos critérios de pesquisa, utilizando junção OR.")
+    @ApiResponse(responseCode = "200", description = "Lista de motoristas encontrados.")
+    public ResponseEntity<Page<DadosDetalhamentoMotorista>> pesquisarMotoristasOr(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String cpf,
+            @RequestParam(required = false) @DateTimeFormat(iso = DATE) LocalDate dataNascimento,
+            @RequestParam(required = false) String numeroCNH,
+            @RequestParam(required = false) String sexo,
+            @RequestParam(required = false) Boolean ativo,
+            @RequestParam(required = false) List<String> placasAlugueis,
+            @PageableDefault(size = 5) Pageable paginacao
+    ) {
+        Page<DadosDetalhamentoMotorista> motoristas = motoristaService.pesquisarMotoristasOr(
                 nome,
                 email,
                 cpf,

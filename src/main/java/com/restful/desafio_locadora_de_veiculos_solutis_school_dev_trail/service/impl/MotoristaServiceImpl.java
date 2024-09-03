@@ -45,7 +45,7 @@ public class MotoristaServiceImpl implements MotoristaService {
     @Override
     @Transactional
     @Schema(description = "Cadastra um novo motorista.")
-    public Motorista cadastrarMotorista(@Valid DadosCadastroMotorista dadosCadastroMotorista) {
+    public Motorista cadastrarMotorista(DadosCadastroMotorista dadosCadastroMotorista) {
         log.info("Iniciando cadastro do motorista: {}", dadosCadastroMotorista);
         validarCamposDuplicados(dadosCadastroMotorista);
         log.info("Campos únicos validados com sucesso");
@@ -123,8 +123,8 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
-    @Schema(description = "Pesquisa motoristas com base nos filtros informados.")
-    public Page<DadosDetalhamentoMotorista> pesquisarMotoristas(
+    @Schema(description = "Pesquisa motoristas com base nos filtros informados, usando junção AND.")
+    public Page<DadosDetalhamentoMotorista> pesquisarMotoristasAnd(
             String nome,
             String email,
             String cpf,
@@ -135,7 +135,7 @@ public class MotoristaServiceImpl implements MotoristaService {
             List<String> placasAlugueis,
             Pageable paginacao
     ) {
-        log.info("Iniciando pesquisa de motoristas com os seguintes critérios:");
+        log.info("Iniciando pesquisa de motoristas com os seguintes critérios (AND):");
         log.info("Nome: {}", nome);
         log.info("Email: {}", email);
         log.info("CPF: {}", cpf);
@@ -147,30 +147,69 @@ public class MotoristaServiceImpl implements MotoristaService {
 
         Specification<Motorista> spec = where(null);
 
-        spec = addSpecificationIfNotNull(spec, nome, MotoristaSpecs::nomeContains);
-        spec = addSpecificationIfNotNull(spec, email, MotoristaSpecs::emailEquals);
-        spec = addSpecificationIfNotNull(spec, cpf, MotoristaSpecs::cpfEquals);
-        spec = addSpecificationIfNotNull(spec, dataNascimento, MotoristaSpecs::dataNascimentoEquals);
-        spec = addSpecificationIfNotNull(spec, numeroCNH, MotoristaSpecs::numeroCNHEquals);
-        spec = addSpecificationIfNotNull(spec, sexo, MotoristaSpecs::sexoEquals);
-        spec = addSpecificationIfNotNull(spec, ativo, MotoristaSpecs::ativoEquals);
-
-        if (placasAlugueis != null && !placasAlugueis.isEmpty())
-            spec = spec.and(MotoristaSpecs.alugueisComPlacas(placasAlugueis));
+        spec = addSpecification(spec, nome, MotoristaSpecs::nomeContains, true);
+        spec = addSpecification(spec, email, MotoristaSpecs::emailEquals, true);
+        spec = addSpecification(spec, cpf, MotoristaSpecs::cpfEquals, true);
+        spec = addSpecification(spec, dataNascimento, MotoristaSpecs::dataNascimentoEquals, true);
+        spec = addSpecification(spec, numeroCNH, MotoristaSpecs::numeroCNHEquals, true);
+        spec = addSpecification(spec, sexo, MotoristaSpecs::sexoEquals, true);
+        spec = addSpecification(spec, ativo, MotoristaSpecs::ativoEquals, true);
+        spec = addSpecification(spec, placasAlugueis, MotoristaSpecs::alugueisComPlacas, true);
 
         Page<DadosDetalhamentoMotorista> resultados = motoristaRepository.findAll(spec, paginacao)
                 .map(DadosDetalhamentoMotorista::new);
-        log.info("Pesquisa de motoristas concluída. Número de resultados encontrados: {}", resultados.getTotalElements());
+        log.info("Pesquisa de motoristas concluída (AND). Número de resultados encontrados: {}", resultados.getTotalElements());
         return resultados;
     }
 
-    @Schema(description = "Adiciona uma especificação à especificação atual se o valor não for nulo.")
-    private <T> Specification<Motorista> addSpecificationIfNotNull(
+    @Override
+    @Schema(description = "Pesquisa motoristas com base nos filtros informados, usando junção OR.")
+    public Page<DadosDetalhamentoMotorista> pesquisarMotoristasOr(
+            String nome,
+            String email,
+            String cpf,
+            LocalDate dataNascimento,
+            String numeroCNH,
+            String sexo,
+            Boolean ativo,
+            List<String> placasAlugueis,
+            Pageable paginacao
+    ) {
+        log.info("Iniciando pesquisa de motoristas com os seguintes critérios (OR):");
+        log.info("Nome: {}", nome);
+        log.info("Email: {}", email);
+        log.info("CPF: {}", cpf);
+        log.info("Data de Nascimento: {}", dataNascimento);
+        log.info("Número da CNH: {}", numeroCNH);
+        log.info("Sexo: {}", sexo);
+        log.info("Ativo: {}", ativo);
+        log.info("Placas de Aluguéis: {}", placasAlugueis);
+
+        Specification<Motorista> spec = where(null);
+
+        spec = addSpecification(spec, nome, MotoristaSpecs::nomeContains, false);
+        spec = addSpecification(spec, email, MotoristaSpecs::emailEquals, false);
+        spec = addSpecification(spec, cpf, MotoristaSpecs::cpfEquals, false);
+        spec = addSpecification(spec, dataNascimento, MotoristaSpecs::dataNascimentoEquals, false);
+        spec = addSpecification(spec, numeroCNH, MotoristaSpecs::numeroCNHEquals, false);
+        spec = addSpecification(spec, sexo, MotoristaSpecs::sexoEquals, false);
+        spec = addSpecification(spec, ativo, MotoristaSpecs::ativoEquals, false);
+        spec = addSpecification(spec, placasAlugueis, MotoristaSpecs::alugueisComPlacas, false);
+
+        Page<DadosDetalhamentoMotorista> resultados = motoristaRepository.findAll(spec, paginacao)
+                .map(DadosDetalhamentoMotorista::new);
+        log.info("Pesquisa de motoristas concluída (OR). Número de resultados encontrados: {}", resultados.getTotalElements());
+        return resultados;
+    }
+
+    @Schema(description = "Adiciona uma especificação à especificação atual com base no tipo de junção (AND ou OR).")
+    private <T> Specification<Motorista> addSpecification(
             Specification<Motorista> spec,
             T value,
-            Function<T, Specification<Motorista>> specBuilder
+            Function<T, Specification<Motorista>> specBuilder,
+            boolean isAnd
     ) {
-        return value != null ? spec.and(specBuilder.apply(value)) : spec;
+        return value != null ? (isAnd ? spec.and(specBuilder.apply(value)) : spec.or(specBuilder.apply(value))) : spec;
     }
 
     @Schema(description = "Verifica se um motorista existe com base no ID.")
@@ -223,7 +262,7 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Schema(description = "Valida se os campos únicos do motorista não estão duplicados.")
-    private void validarCamposDuplicados(@Valid DadosCadastroMotorista dados) {
+    private void validarCamposDuplicados(DadosCadastroMotorista dados) {
         List<String> errosDuplicados = new ArrayList<>();
 
         if (motoristaRepository.existsByCpf(dados.cpf())) {
