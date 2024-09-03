@@ -47,8 +47,16 @@ import java.time.LocalDateTime;
 @Setter
 @Schema(description = "Detalhes de um erro ocorrido durante o processamento de uma requisição.")
 public class ErrorDetails {
+
+    @Schema(description = "A data e hora em que o erro ocorreu.")
     private LocalDateTime timestamp;
+
+    @Schema(description = "A mensagem de erro que descreve o problema ocorrido.")
     private String message;
+
+    @Schema(description = "Detalhes adicionais sobre o erro, como a URI da requisição ou a descrição da exceção.")
     private String details;
+
+    @Schema(description = "O código ou tipo do erro ocorrido, facilitando a categorização do problema.")
     private String errorCode;
 }

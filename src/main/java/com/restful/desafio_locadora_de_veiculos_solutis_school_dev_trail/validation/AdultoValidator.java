@@ -19,11 +19,13 @@ public class AdultoValidator implements ConstraintValidator<Adulto, LocalDate> {
     }
 
     @Override
+    @Schema(description = "Verifica se a data de nascimento corresponde a uma pessoa maior de idade.")
     public boolean isValid(LocalDate dataNascimento, ConstraintValidatorContext context) {
         if (dataNascimento == null) return true;
         return isMaiorDeIdade(dataNascimento);
     }
 
+    @Schema(description = "Verifica se a data de nascimento corresponde a uma pessoa maior de idade.")
     private boolean isMaiorDeIdade(LocalDate dataNascimento) {
         LocalDate dataAtual = LocalDate.now();
         Period periodo = Period.between(dataNascimento, dataAtual);

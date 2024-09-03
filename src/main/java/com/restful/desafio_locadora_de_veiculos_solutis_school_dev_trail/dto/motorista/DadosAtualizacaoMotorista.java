@@ -24,36 +24,30 @@ public record DadosAtualizacaoMotorista(
         @Schema(description = "ID do motorista a ser atualizado.")
         Long id,
 
-        @NotBlank(message = "O nome é obrigatório")
         @Size(min = 3, max = 80, message = "O nome deve ter entre 3 e 80 caracteres")
         @Schema(description = "Nome completo do motorista.")
         String nome,
 
-        @NotNull(message = "A data de nascimento é obrigatória")
         @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
         @Adulto(message = "Você não é maior de idade")
         @Schema(description = "Data de nascimento do motorista.")
         LocalDate dataNascimento,
 
         @Column(unique = true)
-        @NotBlank(message = "O CPF é obrigatório")
         @CPF(message = "CPF inválido")
         @Schema(description = "CPF do motorista.")
         String cpf,
 
         @Column(unique = true)
-        @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "E-mail inválido")
         @Schema(description = "Endereço de email do motorista.")
         String email,
 
         @Column(unique = true)
-        @NotBlank(message = "O número da CNH é obrigatório")
         @CNH(message = "Número da CNH inválido")
         @Schema(description = "Número da CNH do motorista.")
         String numeroCNH,
 
-        @NotNull(message = "O sexo é obrigatório")
         @Schema(description = "Sexo do motorista.")
         Sexo sexo,
 

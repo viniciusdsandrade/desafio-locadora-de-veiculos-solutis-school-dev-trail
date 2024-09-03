@@ -18,6 +18,7 @@ import java.util.List;
 public interface CarroService {
 
     @Transactional
+    @Schema(description = "Cadastra um carro.")
     Carro cadastrarCarro(@Valid DadosCadastroCarro dadosCadastroCarro);
 
     @Schema(description = "Busca um carro pelo seu identificador.")
@@ -48,6 +49,23 @@ public interface CarroService {
     @Schema(description = "Lista os carros alugados.")
     Page<DadosListagemCarro> listarCarrosAlugados(Pageable paginacao);
 
+    /**
+     * Pesquisa carros com base nos filtros informados.
+     *
+     * @param nome            O nome do carro a ser pesquisado.
+     * @param placa           A placa do carro a ser pesquisada.
+     * @param chassi          O chassi do carro a ser pesquisado.
+     * @param cor             A cor do carro a ser pesquisada.
+     * @param disponivel      A disponibilidade do carro a ser pesquisada (true para disponível, false para indisponível).
+     * @param valorDiariaMin  O valor mínimo da diária a ser considerado na pesquisa.
+     * @param valorDiariaMax  O valor máximo da diária a ser considerado na pesquisa.
+     * @param modeloDescricao A descrição do modelo do carro a ser pesquisada.
+     * @param fabricanteNome  O nome do fabricante do carro a ser pesquisado.
+     * @param categoriaNome   O nome da categoria do carro a ser pesquisada.
+     * @param acessoriosNomes A lista de nomes de acessórios a serem pesquisados.
+     * @param paginacao       As informações de paginação da pesquisa.
+     * @return Uma página de {@link DadosDetalhamentoCarro} contendo os carros que atendem aos critérios de pesquisa.
+     */
     @Schema(description = "Pesquisa carros com base nos filtros informados.")
     Page<DadosDetalhamentoCarro> pesquisarCarros(
             String nome,

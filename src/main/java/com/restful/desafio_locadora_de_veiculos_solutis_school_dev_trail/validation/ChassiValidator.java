@@ -11,11 +11,13 @@ public class ChassiValidator implements ConstraintValidator<Chassi, String> {
     public ChassiValidator() {}
 
     @Override
+    @Schema(description = "Inicializa o validador.")
     public void initialize(Chassi constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
+    @Schema(description = "Verifica se o chassi informado é válido.")
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         // todo : implementar validação de chassi
         return true;

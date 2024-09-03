@@ -11,11 +11,13 @@ public class PlacaValidator implements ConstraintValidator<Placa, String> {
     public PlacaValidator() {}
 
     @Override
+    @Schema(description = "Inicializa o validador.")
     public void initialize(Placa constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
+    @Schema(description = "Verifica se a placa informada é válida.")
     public boolean isValid(String placa, ConstraintValidatorContext constraintValidatorContext) {
         // todo : implementar validação de chassi
         return true;

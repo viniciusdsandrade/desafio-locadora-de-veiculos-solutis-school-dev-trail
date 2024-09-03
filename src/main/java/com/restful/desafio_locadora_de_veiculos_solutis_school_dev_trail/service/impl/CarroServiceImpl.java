@@ -32,8 +32,10 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @Schema(description = "Serviço que implementa as operações relacionadas a carros.")
 public class CarroServiceImpl implements CarroService {
 
+    @Schema(description = "Logger para a classe CarroServiceImpl.")
     private static final Logger log = getLogger(CarroServiceImpl.class);
 
+    @Schema(description = "Repositório JPA para a entidade Carro.")
     private final CarroRepository carroRepository;
 
     public CarroServiceImpl(CarroRepository carroRepository) {
@@ -42,6 +44,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Transactional
+    @Schema(description = "Cadastra um novo carro.")
     public Carro cadastrarCarro(@Valid DadosCadastroCarro dadosCadastroCarro) {
         log.info("Iniciando cadastro do carro: {}", dadosCadastroCarro);
         validarCamposDuplicados(dadosCadastroCarro);
@@ -55,6 +58,7 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
+    @Schema(description = "Busca um carro pelo ID.")
     public Carro buscarPorId(Long id) {
         log.info("Buscando carro por ID: {}", id);
         Carro carro = existeCarroPeloId(id);
@@ -64,6 +68,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Transactional
+    @Schema(description = "Atualiza um carro.")
     public Carro atualizarCarro(@Valid DadosAtualizacaoCarro dadosAtualizarCarro) {
         log.info("Atualizando carro com dados: {}", dadosAtualizarCarro);
         Carro carro = existeCarroPeloId(dadosAtualizarCarro.id());
@@ -78,6 +83,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Transactional
+    @Schema(description = "Bloqueia um carro para aluguel.")
     public void bloquearCarroAluguel(Long id) {
         log.info("Desativando carro com ID: {}", id);
         Carro carro = existeCarroPeloId(id);
@@ -88,6 +94,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Transactional
+    @Schema(description = "Disponibiliza um carro para aluguel.")
     public void disponibilizarCarroAluguel(Long id) {
         log.info("Ativando carro com ID: {}", id);
         Carro carro = existeCarroPeloId(id);
@@ -98,6 +105,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Transactional
+    @Schema(description = "Exclui um carro.")
     public void excluirCarro(Long id) {
         log.info("Deletando carro com ID: {}", id);
         existeCarroPeloId(id);
@@ -106,6 +114,7 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
+    @Schema(description = "Lista todos os carros cadastrados.")
     public Page<DadosListagemCarro> listar(Pageable paginacao) {
         log.info("Listando carros com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAll(paginacao);
@@ -114,6 +123,7 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
+    @Schema(description = "Lista todos os carros disponíveis para aluguel.")
     public Page<DadosListagemCarro> listarCarrosDisponiveis(Pageable paginacao) {
         log.info("Listando carros disponíveis com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAllByDisponivelTrue(paginacao);
@@ -122,6 +132,7 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
+    @Schema(description = "Lista todos os carros alugados.")
     public Page<DadosListagemCarro> listarCarrosAlugados(Pageable paginacao) {
         log.info("Listando carros alugados com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAllByDisponivelFalse(paginacao);
@@ -130,6 +141,7 @@ public class CarroServiceImpl implements CarroService {
     }
 
     @Override
+    @Schema(description = "Pesquisa carros com base em critérios.")
     public Page<DadosDetalhamentoCarro> pesquisarCarros(
             String nome,
             String placa,
@@ -177,6 +189,7 @@ public class CarroServiceImpl implements CarroService {
         return resultados;
     }
 
+    @Schema(description = "Adiciona uma especificação à especificação atual se o valor não for nulo.")
     private <T> Specification<Carro> addSpecificationIfNotNull(
             Specification<Carro> spec,
             T value,
@@ -185,6 +198,7 @@ public class CarroServiceImpl implements CarroService {
         return value != null ? spec.and(specBuilder.apply(value)) : spec;
     }
 
+    @Schema(description = "Verifica se há campos duplicados ao cadastrar um carro.")
     private void validarCamposDuplicadosNoDtoAtualizacao(@Valid DadosAtualizacaoCarro dadosAtualizarCarro, Carro carroAtual) {
         List<String> erroDuplicados = new ArrayList<>();
 
@@ -200,6 +214,7 @@ public class CarroServiceImpl implements CarroService {
         }
     }
 
+    @Schema(description = "Verifica se há campos duplicados ao cadastrar um carro.")
     private void validarCamposDuplicados(@Valid DadosCadastroCarro dadosCadastroCarro) {
         List<String> erroDuplicados = new ArrayList<>();
 
@@ -212,6 +227,7 @@ public class CarroServiceImpl implements CarroService {
         }
     }
 
+    @Schema(description = "Verifica se um valor já existe no banco de dados e adiciona uma mensagem de erro à lista de erros.")
     private void verificarDuplicidade(
             String valor,
             boolean existe,
@@ -224,6 +240,7 @@ public class CarroServiceImpl implements CarroService {
         }
     }
 
+    @Schema(description = "Verifica se um carro existe pelo ID.")
     private Carro existeCarroPeloId(Long id) {
         return carroRepository.findById(id)
                 .orElseThrow(() -> {

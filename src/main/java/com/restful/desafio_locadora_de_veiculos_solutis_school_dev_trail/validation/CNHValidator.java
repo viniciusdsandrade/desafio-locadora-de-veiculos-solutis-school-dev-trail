@@ -11,11 +11,13 @@ public class CNHValidator implements ConstraintValidator<CNH, String> {
     public CNHValidator() {}
 
     @Override
+    @Schema(description = "Inicializa o validador.")
     public void initialize(CNH constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
+    @Schema(description = "Verifica se o número de CNH informado é válido.")
     public boolean isValid(String cnh, ConstraintValidatorContext context) {
         if (cnh == null) return true; // Permite CNH nula (caso de atualização, por exemplo)
 

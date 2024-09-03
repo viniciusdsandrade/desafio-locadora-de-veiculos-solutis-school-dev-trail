@@ -65,7 +65,17 @@ public class CarroController {
     @GetMapping
     @Operation(summary = "Listar carros", description = "Retorna uma lista paginada de carros.")
     @ApiResponse(responseCode = "200", description = "Lista de carros.")
-    public ResponseEntity<Page<DadosListagemCarro>> listar(@PageableDefault(size = 20, sort = {"modelo"}) Pageable paginacao) {
+    public ResponseEntity<Page<DadosListagemCarro>> listar(
+            @PageableDefault(size = 20, sort = {"modelo"}) Pageable paginacao,
+            @RequestParam(required = false) String modelo,
+            @RequestParam(required = false) String fabricante,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String cor,
+            @RequestParam(required = false) String placa,
+            @RequestParam(required = false) String chassi,
+            @RequestParam(required = false) BigDecimal valorDiariaMin,
+            @RequestParam(required = false) BigDecimal valorDiariaMax
+    ) {
         var carros = carroService.listar(paginacao);
         return ResponseEntity.ok(carros);
     }

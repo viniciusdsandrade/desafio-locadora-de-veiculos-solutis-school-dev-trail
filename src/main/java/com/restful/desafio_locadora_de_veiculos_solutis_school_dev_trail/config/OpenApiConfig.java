@@ -27,8 +27,13 @@ public class OpenApiConfig {
                         .license(new License().name("Licença").url("https://github.com/viniciusdsandrade/desafio-locadora-de-veiculos-solutis-school-dev-trail"))
                         .contact(new Contact()
                                 .name("Linkedin")
-                                .url("https://www.linkedin.com/in/viniciusdsandrade/")
-                        )
+                                .url("https://www.linkedin.com/in/viniciusdsandrade/"))
+                        .contact(new Contact()
+                                .name("GitHub")
+                                .url("https://github.com/viniciusdsandrade"))
+                        .contact(new Contact()
+                                .name("E-mail")
+                                .url("mailto:vinicius_andrade2010@hotmail.com"))
                 );
     }
 
