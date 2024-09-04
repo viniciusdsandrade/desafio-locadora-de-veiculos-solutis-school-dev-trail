@@ -66,7 +66,7 @@ public class CarroController {
     @Operation(summary = "Listar carros", description = "Retorna uma lista paginada de carros.")
     @ApiResponse(responseCode = "200", description = "Lista de carros.")
     public ResponseEntity<Page<DadosListagemCarro>> listar(
-            @PageableDefault(size = 20, sort = {"modelo"}) Pageable paginacao
+            @PageableDefault(size = 5) Pageable paginacao
     ) {
         var carros = carroService.listar(paginacao);
         return ResponseEntity.ok(carros);
@@ -156,7 +156,7 @@ public class CarroController {
     @GetMapping("/disponiveis")
     @Operation(summary = "Listar carros disponíveis", description = "Retorna uma lista paginada de carros disponíveis para aluguel.")
     @ApiResponse(responseCode = "200", description = "Lista de carros disponíveis.")
-    public ResponseEntity<Page<DadosListagemCarro>> listarCarrosDisponiveis(@PageableDefault(size = 20) Pageable paginacao) {
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> listarCarrosDisponiveis(@PageableDefault(size = 5) Pageable paginacao) {
         var carros = carroService.listarCarrosDisponiveis(paginacao);
         return ResponseEntity.ok(carros);
     }
@@ -164,7 +164,7 @@ public class CarroController {
     @GetMapping("/alugados")
     @Operation(summary = "Listar carros alugados", description = "Retorna uma lista paginada de carros que estão atualmente alugados.")
     @ApiResponse(responseCode = "200", description = "Lista de carros alugados.")
-    public ResponseEntity<Page<DadosListagemCarro>> listarCarrosAlugados(@PageableDefault(size = 20) Pageable paginacao) {
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> listarCarrosAlugados(@PageableDefault(size = 5) Pageable paginacao) {
         var carros = carroService.listarCarrosAlugados(paginacao);
         return ResponseEntity.ok(carros);
     }

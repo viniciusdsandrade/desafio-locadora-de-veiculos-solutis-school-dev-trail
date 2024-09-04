@@ -44,10 +44,10 @@ public interface CarroService {
     Page<DadosListagemCarro> listar(Pageable paginacao);
 
     @Schema(description = "Lista os carros disponíveis para aluguel.")
-    Page<DadosListagemCarro> listarCarrosDisponiveis(Pageable paginacao);
+    Page<DadosDetalhamentoCarro> listarCarrosDisponiveis(Pageable paginacao);
 
     @Schema(description = "Lista os carros alugados.")
-    Page<DadosListagemCarro> listarCarrosAlugados(Pageable paginacao);
+    Page<DadosDetalhamentoCarro> listarCarrosAlugados(Pageable paginacao);
 
     @Schema(description = "Pesquisa carros com base nos filtros informados.")
     Page<DadosDetalhamentoCarro> pesquisarCarrosAnd(

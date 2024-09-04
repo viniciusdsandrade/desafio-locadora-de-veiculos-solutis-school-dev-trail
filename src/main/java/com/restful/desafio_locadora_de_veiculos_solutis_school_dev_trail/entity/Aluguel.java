@@ -2,8 +2,6 @@ package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.StatusAluguel;
-import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.StatusPagamento;
-import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.TipoPagamento;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,8 +12,6 @@ import org.hibernate.proxy.HibernateProxy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
@@ -68,42 +64,6 @@ public class Aluguel {
     @Schema(description = "Status atual do aluguel.")
     private StatusAluguel statusAluguel;
 
-    @Enumerated(STRING)
-    @Schema(description = "Tipo de pagamento utilizado para o aluguel.")
-    private TipoPagamento tipoPagamento;
-
-    @Enumerated(STRING)
-    @Schema(description = "Status do pagamento do aluguel.")
-    private StatusPagamento statusPagamento;
-
-    @Schema(description = "Data em que o pagamento foi efetuado.")
-    private LocalDate dataPagamento;
-
-    @Schema(description = "Data em que o aluguel foi cancelado.")
-    private LocalDate dataCancelamento;
-
-    @Column(name = "campo_pix")
-    private String campoPix;
-
-    @Column(name = "campo_boleto")
-    private String campoBoleto;
-
-    @Column(name = "numero_cartao")
-    private String numeroCartao;
-
-    @Column(name = "validade_cartao")
-    private String validadeCartao;
-
-    @Column(name = "cvv")
-    private String cvv;
-
-    @Column(name = "pagamento_dinheiro")
-    private String pagamentoDinheiro;
-
-    @Getter
-    @Transient
-    private Map<String, Object> camposAdicionais = new HashMap<>();
-
     /**
      * Motorista que realizou este aluguel.
      * <p>
@@ -120,7 +80,7 @@ public class Aluguel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "motorista_id", nullable = false)
     @Schema(description = "Motorista que realizou o aluguel.")
-    private Motorista motorista;
+    private Motorista motorista; // Umn aluguel precisa de um motorista e somente um motorista
 
     /**
      * Carro associado a este aluguel.
@@ -137,7 +97,7 @@ public class Aluguel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "carro_id", nullable = false)
     @Schema(description = "Carro alugado.")
-    private Carro carro;
+    private Carro carro; // Um aluguel precisa de um carro e somente um carro
 
     /**
      * Apólice de seguro associada ao aluguel.
@@ -153,7 +113,12 @@ public class Aluguel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apolice_seguro_id", nullable = false)
     @Schema(description = "Apólice de seguro associada ao aluguel.")
-    private ApoliceSeguro apoliceSeguro;
+    private ApoliceSeguro apoliceSeguro; // Um aluguel precisa de uma apólice de seguro e somente uma apólice de seguro
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "carrinho_aluguel_id")
+    @Schema(description = "Carrinho de aluguel ao qual este aluguel pertence.")
+    private CarrinhoAluguel carrinhoAluguel; // Um aluguel pertence a um carrinho de aluguel e somente um carrinho de aluguel
 
     @CreationTimestamp
     @Setter(NONE)
@@ -165,10 +130,6 @@ public class Aluguel {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
-
-    public void adicionarCampo(String nome, Object valor) {
-        camposAdicionais.put(nome, valor);
-    }
 
     public void adicionarApoliceSeguro(ApoliceSeguro apoliceSeguro) {
         this.apoliceSeguro = apoliceSeguro;

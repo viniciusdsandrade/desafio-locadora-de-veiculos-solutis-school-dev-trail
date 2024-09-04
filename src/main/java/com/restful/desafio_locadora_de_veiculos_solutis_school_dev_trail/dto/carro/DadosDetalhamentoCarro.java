@@ -6,6 +6,7 @@ import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.config.
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.aluguel.DadosListagemAluguelDeCarro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Carro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.acessorio.DadosListagemAcessorios;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.Cor;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public record DadosDetalhamentoCarro(
         String chassi,
 
         @Schema(description = "Cor do carro.")
-        String cor,
+        Cor cor,
 
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor da diária do aluguel do carro.")
@@ -66,7 +67,7 @@ public record DadosDetalhamentoCarro(
                 carro.getCor(),
                 carro.getValorDiaria(),
                 carro.isDisponivel(),
-                carro.getModelo().getDescricao(),
+                carro.getModeloCarro().getDescricaoModeloCarro(),
                 carro.getDataCreated(),
                 carro.getLastUpdated(),
                 carro.getAcessorios()

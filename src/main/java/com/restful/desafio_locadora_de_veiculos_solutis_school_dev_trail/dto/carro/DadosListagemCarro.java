@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.config.BigDecimalCurrencySerializer;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Carro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.acessorio.DadosListagemAcessorios;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.Cor;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -24,6 +25,9 @@ public record DadosListagemCarro(
         @Schema(description = "Nome do modelo do carro.")
         String modeloCarro,
 
+        @Schema(description = "Cor do carro.")
+        Cor cor,
+
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor da diária do aluguel do carro.")
         BigDecimal valorDiaria,
@@ -38,7 +42,8 @@ public record DadosListagemCarro(
         this(
                 carro.getNome(),
                 carro.getPlaca(),
-                carro.getModelo() != null ? carro.getModelo().getDescricao() : null,
+                carro.getModeloCarro() != null ? carro.getModeloCarro().getDescricaoModeloCarro() : null,
+                carro.getCor(),
                 carro.getValorDiaria(),
                 carro.isDisponivel(),
                 carro.getAcessorios()
@@ -50,6 +55,7 @@ public record DadosListagemCarro(
     }
 
     public DadosListagemCarro(String s) {
-        this(s, s, s, ZERO, false, List.of(s));
+        this(s, s, s, null, ZERO, false, List.of(s));
     }
+
 }

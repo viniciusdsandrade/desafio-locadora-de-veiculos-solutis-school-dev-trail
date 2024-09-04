@@ -2,6 +2,7 @@ package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.ca
 
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Acessorio;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.ModeloCarro;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.Cor;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.validation.annotations.Chassi;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.validation.annotations.Placa;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,9 +37,9 @@ public record DadosCadastroCarro(
         @Chassi(message = "Chassi inválido")
         String chassi,
 
-        @NotBlank(message = "A cor do carro é obrigatória")
+        @NotNull(message = "A cor do carro é obrigatória")
         @Schema(description = "Cor do carro.")
-        String cor,
+        Cor cor,
 
         @NotNull(message = "O valorTotalParcial diário do aluguel é obrigatório")
         @DecimalMin(value = "0.0", inclusive = false, message = "O valorTotalParcial diário deve ser maior que zero")
@@ -48,7 +49,7 @@ public record DadosCadastroCarro(
         @NotNull(message = "A lista de acessórios não pode ser nula")
         @Size(min = 1, message = "O carro deve ter pelo menos um acessório")
         @Schema(description = "Lista de acessórios incluídos no carro.")
-        List<Acessorio> acessorio,
+        List<Acessorio> acessorios,
 
         @NotNull(message = "O modelo do carro é obrigatório")
         @Schema(description = "Modelo do carro ao qual este carro pertence.")

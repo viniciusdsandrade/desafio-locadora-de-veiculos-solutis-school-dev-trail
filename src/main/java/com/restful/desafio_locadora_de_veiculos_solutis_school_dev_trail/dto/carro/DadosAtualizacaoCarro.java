@@ -2,6 +2,7 @@ package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.ca
 
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Acessorio;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.ModeloCarro;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.Cor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
@@ -33,14 +34,12 @@ public record DadosAtualizacaoCarro(
         String chassi,
 
         @Schema(description = "Cor do carro.", example = "Preto")
-        String cor,
+        Cor cor,
 
-        @NotNull(message = "O valorTotalParcial da diária é obrigatório")
         @DecimalMin(value = "0.0", inclusive = false, message = "O valorTotalParcial diário deve ser maior que zero")
         @Schema(description = "Valor da diária do aluguel do carro.", example = "150.00")
         BigDecimal valorDiario,
 
-        @NotEmpty(message = "A lista de acessórios não pode estar vazia")
         @Schema(description = "Lista de acessórios do carro.")
         List<Acessorio> acessorio,
 

@@ -123,20 +123,20 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Schema(description = "Lista todos os carros disponíveis para aluguel.")
-    public Page<DadosListagemCarro> listarCarrosDisponiveis(Pageable paginacao) {
+    public Page<DadosDetalhamentoCarro> listarCarrosDisponiveis(Pageable paginacao) {
         log.info("Listando carros disponíveis com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAllByDisponivelTrue(paginacao);
         log.info("Carros disponíveis encontrados: {}", carros);
-        return carros.map(DadosListagemCarro::new);
+        return carros.map(DadosDetalhamentoCarro::new);
     }
 
     @Override
     @Schema(description = "Lista todos os carros alugados.")
-    public Page<DadosListagemCarro> listarCarrosAlugados(Pageable paginacao) {
+    public Page<DadosDetalhamentoCarro> listarCarrosAlugados(Pageable paginacao) {
         log.info("Listando carros alugados com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAllByDisponivelFalse(paginacao);
         log.info("Carros alugados encontrados: {}", carros);
-        return carros.map(DadosListagemCarro::new);
+        return carros.map(DadosDetalhamentoCarro::new);
     }
 
     @Override

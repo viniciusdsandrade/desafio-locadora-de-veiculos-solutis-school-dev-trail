@@ -3,6 +3,7 @@ package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosAtualizacaoCarro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.Cor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -20,8 +21,10 @@ import java.util.Objects;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.lang.String.valueOf;
 import static lombok.AccessLevel.NONE;
 import static java.time.LocalDateTime.now;
 import static java.util.Optional.ofNullable;
@@ -47,28 +50,29 @@ public class Carro {
     private Long id;
 
     @Column(nullable = false)
-    @Schema(description = "Nome do modelo do carro.", example = "Corolla")
+    @Schema(description = "Nome do modelo do carro.")
     private String nome;
 
     @Column(nullable = false)
-    @Schema(description = "Placa do carro.", example = "ABC1234")
+    @Schema(description = "Placa do carro.")
     private String placa;
 
     @Column(nullable = false)
-    @Schema(description = "Chassi do carro.", example = "1HGBH41JXMN109186")
+    @Schema(description = "Chassi do carro.")
     private String chassi;
 
+    @Enumerated(STRING)
     @Column(nullable = false)
-    @Schema(description = "Cor do carro.", example = "Preto")
-    private String cor;
-
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    @Schema(description = "Indica se o carro está disponível para aluguel (true) ou indisponível (false).", example = "true")
-    private boolean disponivel;
+    @Schema(description = "Cor do carro.")
+    private Cor cor;
 
     @Column(precision = 10, scale = 2, nullable = false)
-    @Schema(description = "Valor da diária do aluguel do carro.", example = "150.00")
+    @Schema(description = "Valor da diária do aluguel do carro.")
     private BigDecimal valorDiaria;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Schema(description = "Indica se o carro está disponível para aluguel (true) ou indisponível (false).")
+    private boolean disponivel;
 
     /**
      * Lista de acessórios associados a este carro.
@@ -132,7 +136,7 @@ public class Carro {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "modelo_carro_id", nullable = false)
     @Schema(description = "Modelo do carro.")
-    private ModeloCarro modelo;
+    private ModeloCarro modeloCarro;
 
     /**
      * Lista de aluguéis associados a este carro.
@@ -182,10 +186,10 @@ public class Carro {
         this.nome = dadosCadastroCarro.nome();
         this.placa = dadosCadastroCarro.placa();
         this.chassi = dadosCadastroCarro.chassi();
-        this.cor = dadosCadastroCarro.cor();
+        this.cor = Cor.valueOf(valueOf(dadosCadastroCarro.cor()));
         this.valorDiaria = dadosCadastroCarro.valorDiario();
-        this.acessorios = dadosCadastroCarro.acessorio();
-        this.modelo = dadosCadastroCarro.modelo();
+        this.acessorios = dadosCadastroCarro.acessorios();
+        this.modeloCarro = dadosCadastroCarro.modelo();
         this.disponivel = true;
         this.dataCreated = now();
         this.lastUpdated = now();
@@ -198,7 +202,7 @@ public class Carro {
         ofNullable(dadosAtualizarCarro.cor()).ifPresent(this::setCor);
         ofNullable(dadosAtualizarCarro.valorDiario()).ifPresent(this::setValorDiaria);
         ofNullable(dadosAtualizarCarro.acessorio()).ifPresent(this::adicionarAcessorios);
-        ofNullable(dadosAtualizarCarro.modelo()).ifPresent(this::setModelo);
+        ofNullable(dadosAtualizarCarro.modelo()).ifPresent(this::setModeloCarro);
         this.lastUpdated = now();
     }
 
@@ -236,7 +240,7 @@ public class Carro {
 
     @Override
     public String toString() {
-        return "Carro{id=" + id + ", placa='" + placa + '\'' + ", chassi='" + chassi + '\'' + ", cor='" + cor + '\'' + ", isDisponivelParaAluguel=" + disponivel + ", valorDiaria=" + valorDiaria + ", acessorios=" + acessorios + ", modeloCarro=" + modelo + ", alugueis=" + alugueis + '}';
+        return "Carro{id=" + id + ", placa='" + placa + '\'' + ", chassi='" + chassi + '\'' + ", cor='" + cor + '\'' + ", isDisponivelParaAluguel=" + disponivel + ", valorDiaria=" + valorDiaria + ", acessorios=" + acessorios + ", modeloCarro=" + modeloCarro + ", alugueis=" + alugueis + '}';
     }
 
     @Override

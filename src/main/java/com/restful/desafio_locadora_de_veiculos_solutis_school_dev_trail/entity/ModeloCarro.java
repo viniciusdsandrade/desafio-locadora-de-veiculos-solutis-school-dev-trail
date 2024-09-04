@@ -29,8 +29,8 @@ public class ModeloCarro {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Schema(description = "Descrição do modelo de carro.", example = "Corolla")
-    private String descricao;
+    @Schema(description = "Descrição do modelo de carro.")
+    private String descricaoModeloCarro;
 
     /**
      * Fabricante ao qual este modelo de carro pertence.
@@ -48,7 +48,7 @@ public class ModeloCarro {
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    @Schema(description = "Categoria do modelo de carro.", example = "SEDAN_COMPACTO")
+    @Schema(description = "Categoria do modelo de carro.")
     private Categoria categoria;
 
     /**
@@ -63,14 +63,14 @@ public class ModeloCarro {
      * sejam removidos do banco de dados.
      * </p>
      */
-    @OneToMany(mappedBy = "modelo", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "modeloCarro", cascade = ALL, orphanRemoval = true)
     @Setter(NONE)
     @Schema(description = "Lista de carros específicos deste modelo.")
     private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
 
     @Override
     public String toString() {
-        return "ModeloCarro{id=" + id + ", descricao=" + descricao + ", fabricante=" + fabricante + ", categoria=" + categoria + ", carros=" + carros + '}';
+        return "ModeloCarro{id=" + id + ", descricao=" + descricaoModeloCarro + ", fabricante=" + fabricante + ", categoria=" + categoria + ", carros=" + carros + '}';
     }
 
     @Override

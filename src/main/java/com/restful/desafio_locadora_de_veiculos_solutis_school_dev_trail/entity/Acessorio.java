@@ -37,7 +37,7 @@ public class Acessorio {
     @Enumerated(STRING)
     @Column(nullable = false)
     @Schema(description = "Descrição do tipo de acessório.")
-    private DescricaoAcessorio descricao;
+    private DescricaoAcessorio descricaoAcessorio;
 
     /**
      * Conjunto de carros que possuem este acessório.
@@ -91,7 +91,7 @@ public class Acessorio {
 
     @Override
     public String toString() {
-        return "Acessorio{id=" + id + ", descricao=" + descricao + '}';
+        return "Acessorio{id=" + id + ", descricao=" + descricaoAcessorio + '}';
     }
 
     @Override

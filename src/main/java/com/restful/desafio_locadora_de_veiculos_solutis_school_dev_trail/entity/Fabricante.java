@@ -1,8 +1,8 @@
 package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity;
 
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.DescricaoFabricante;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.EAGER;
@@ -28,9 +29,11 @@ public class Fabricante {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Setter(NONE)
+    @Enumerated(STRING)
     @Column(nullable = false)
-    @Schema(description = "Nome do fabricante.", example = "Toyota")
-    private String nome;
+    @Schema(description = "Nome do fabricante.")
+    private DescricaoFabricante descricaoFabricante;
 
     /**
      * Lista de modelos de carros fabricados por este fabricante.
@@ -49,13 +52,9 @@ public class Fabricante {
     @Schema(description = "Lista de modelos de carros produzidos pelo fabricante.")
     private List<ModeloCarro> modelos = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de modelo para existir
 
-    public Fabricante(@NotBlank(message = "O nome do fabricante é obrigatório.") String nome) {
-        this.nome = nome;
-    }
-
     @Override
     public String toString() {
-        return "Fabricante{id=" + id + ", nome=" + nome + ", modelos=" + modelos + '}';
+        return "Fabricante{id=" + id + ", nome=" + descricaoFabricante + ", modelos=" + modelos + '}';
     }
 
     @Override

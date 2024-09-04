@@ -10,6 +10,6 @@ public record DadosListagemAcessorios(
         String nome
 ) {
     public DadosListagemAcessorios(Acessorio acessorio) {
-        this(valueOf(acessorio.getDescricao()));
+        this(valueOf(acessorio.getDescricaoAcessorio()));
     }
 }
