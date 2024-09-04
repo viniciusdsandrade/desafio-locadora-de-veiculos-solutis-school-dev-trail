@@ -6,18 +6,18 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * Classe responsável por tratar exceções de forma global na aplicação, proporcionando
@@ -109,6 +109,35 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Manipula a exceção {@link IllegalArgumentException}, que é lançada quando um argumento inválido
+     * é passado para um metodo.
+     * <p>
+     * Esta exceção indica que os dados fornecidos pelo cliente na requisição não são válidos
+     * para a operação solicitada. O metodo encapsula os detalhes do erro em um objeto
+     * {@link ErrorDetails} e retorna uma resposta com status HTTP 400 (Bad Request),
+     * indicando que a requisição não pôde ser processada devido a dados inválidos.
+     * </p>
+     *
+     * @param exception  A exceção de argumento inválido, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 400 (Bad Request).
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    @Schema(description = "Manipula a exceção IllegalArgumentException, lançada quando um argumento inválido é passado.")
+    public ResponseEntity<List<ErrorDetails>> handleIllegalArgumentException(IllegalArgumentException exception,
+                                                                             WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "INVALID_ARGUMENT"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), BAD_REQUEST);
+    }
+
+    /**
      * Manipula a exceção {@link EntityNotFoundException}, que é lançada quando uma entidade
      * requisitada não é encontrada no banco de dados.
      * <p>
@@ -137,34 +166,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(List.of(errorDetails), NOT_FOUND);
     }
 
-    /**
-     * Manipula a exceção {@link IllegalArgumentException}, que é lançada quando um argumento inválido
-     * é passado para um metodo.
-     * <p>
-     * Esta exceção indica que os dados fornecidos pelo cliente na requisição não são válidos
-     * para a operação solicitada. O metodo encapsula os detalhes do erro em um objeto
-     * {@link ErrorDetails} e retorna uma resposta com status HTTP 400 (Bad Request),
-     * indicando que a requisição não pôde ser processada devido a dados inválidos.
-     * </p>
-     *
-     * @param exception  A exceção de argumento inválido, que contém a mensagem de erro a ser retornada ao cliente.
-     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
-     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
-     * e o status HTTP 400 (Bad Request).
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    @Schema(description = "Manipula a exceção IllegalArgumentException, lançada quando um argumento inválido é passado.")
-    public ResponseEntity<List<ErrorDetails>> handleIllegalArgumentException(IllegalArgumentException exception,
-                                                                             WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(
-                now(),
-                exception.getMessage(),
-                webRequest.getDescription(false),
-                "INVALID_ARGUMENT"
-        );
-
-        return new ResponseEntity<>(List.of(errorDetails), BAD_REQUEST);
-    }
 
     /**
      * Manipula a exceção {@link DuplicateEntryException}, que é lançada quando há uma tentativa
@@ -199,5 +200,106 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(CONFLICT).body(errors);
+    }
+
+    /**
+     * Manipula exceções que indicam que o tipo de mídia da requisição não é suportado,
+     * correspondente ao código de status HTTP 415 (Unsupported Media Type).
+     * <p>
+     * Este metodo captura exceções do tipo {@link HttpMediaTypeNotSupportedException}, que
+     * geralmente são lançadas quando o cliente envia uma requisição com um tipo de conteúdo
+     * (Content-Type) que o servidor não consegue processar.
+     * </p>
+     * <p>
+     * O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta
+     * com a mensagem "Tipo de mídia não suportado" e o status HTTP 415. Essa resposta informa ao
+     * cliente que o servidor não consegue processar a requisição com o tipo de conteúdo enviado.
+     * </p>
+     *
+     * @param exception  A exceção que representa o tipo de mídia não suportado.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 415 (Unsupported Media Type).
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    @Schema(description = "Manipula exceções que indicam que o tipo de mídia da requisição não é suportado.")
+    public ResponseEntity<List<ErrorDetails>> handleUnsupportedMediaTypeException(HttpMediaTypeNotSupportedException exception,
+                                                                                  WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "UNSUPPORTED_MEDIA_TYPE"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    /**
+     * Manipula exceções genéricas do tipo {@link Exception}, que representam erros inesperados
+     * que podem ocorrer durante o processamento de uma requisição.
+     * <p>
+     * Este metodo atua como um "catch-all" para exceções não tratadas especificamente por outros
+     * metodos de manipulação de exceções. Ele captura qualquer exceção do tipo Exception e retorna
+     * uma resposta com status HTTP 500 (Internal Server Error), indicando que houve um erro interno
+     * no servidor que impediu o processamento da requisição.
+     * </p>
+     * <p>
+     * O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta
+     * com a mensagem "Erro interno no servidor" e o status HTTP 500. Essa resposta informa ao
+     * cliente que houve um problema no servidor, mas não expõe detalhes específicos sobre a causa
+     * do erro, por questões de segurança e para evitar vazamento de informações sensíveis.
+     * </p>
+     *
+     * @param exception  A exceção genérica que representa o erro interno no servidor.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 500 (Internal Server Error).
+     */
+    @ExceptionHandler(InternalServerError.class)
+    @Schema(description = "Manipula exceções genéricas, representando erros inesperados durante o processamento da requisição.")
+    public ResponseEntity<List<ErrorDetails>> handleGlobalException(Exception exception,
+                                                                    WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "INTERNAL_SERVER_ERROR"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Manipula exceções que indicam que uma funcionalidade não está implementada,
+     * correspondente ao código de status HTTP 501 (Not Implemented).
+     * <p>
+     * Este metodo captura exceções do tipo {@link UnsupportedOperationException}, que
+     * geralmente são lançadas quando um metodo ou recurso ainda não foi implementado
+     * na aplicação.
+     * </p>
+     * <p>
+     * O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma resposta
+     * com a mensagem "Funcionalidade não implementada" e o status HTTP 501. Essa resposta informa ao
+     * cliente que a funcionalidade solicitada ainda não está disponível.
+     * </p>
+     *
+     * @param exception  A exceção que representa a funcionalidade não implementada.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 501 (Not Implemented).
+     */
+    @ExceptionHandler(UnsupportedOperationException.class)
+    @Schema(description = "Manipula exceções que indicam que uma funcionalidade não está implementada.")
+    public ResponseEntity<List<ErrorDetails>> handleNotImplementedException(UnsupportedOperationException exception,
+                                                                            WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "NOT_IMPLEMENTED"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), NOT_IMPLEMENTED);
     }
 }
