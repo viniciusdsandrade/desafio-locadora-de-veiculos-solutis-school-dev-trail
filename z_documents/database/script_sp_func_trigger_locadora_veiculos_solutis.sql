@@ -1,8 +1,6 @@
-DROP DATABASE IF EXISTS db_locadora_veiculos;
-CREATE DATABASE IF NOT EXISTS db_locadora_veiculos;
+# DROP DATABASE IF EXISTS db_locadora_veiculos;
+# CREATE DATABASE IF NOT EXISTS db_locadora_veiculos;
 USE db_locadora_veiculos;
-
--- pesquise um motorista (join tabela pessoa) que tem um cpf passado como parâmetro
 
 DROP FUNCTION IF EXISTS calcular_valor_total_inicial;
 DROP FUNCTION IF EXISTS calcular_valor_total_final;

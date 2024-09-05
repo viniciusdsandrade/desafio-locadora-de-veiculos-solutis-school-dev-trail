@@ -31,23 +31,44 @@ public class Funcionario extends Pessoa {
     private String matricula;
 
     @Override
-    public String toString() {
-        return "Funcionario{id=" + getId() + ", matricula=" + matricula + '}';
-    }
-
-    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
         if (thisEffectiveClass != oEffectiveClass) return false;
+
         Funcionario that = (Funcionario) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+
+        return getId() != null &&
+                Objects.equals(this.getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Funcionario{" +
+                "id=" +  this.getId() + // Chama o getId() da classe pai (Pessoa)
+                ", nome='" +  this.getNome() + '\'' + // Chama o getNome() da classe pai (Pessoa)
+                ", cpf='" +  this.getCpf() + '\'' + // Chama o getCpf() da classe pai (Pessoa)
+                ", dataNascimento=" +  this.getDataNascimento() + // Chama o getDataNascimento() da classe pai (Pessoa)
+                ", email='" +  this.getEmail() + '\'' + // Chama o getEmail() da classe pai (Pessoa)
+                ", matricula='" +  this.matricula + '\'' +
+                ", dataCreated=" +  this.getDataCreated() + // Chama o getDataCreated() da classe pai (Pessoa)
+                ", lastUpdated=" +  this.getLastUpdated() + // Chama o getLastUpdated() da classe pai (Pessoa)
+                '}';
     }
 }

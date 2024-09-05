@@ -45,6 +45,8 @@ Hibernate:
         pagamento_dinheiro varchar(255),
         status_carrinho enum ('ABERTO','FECHADO'),
         status_pagamento enum ('CANCELADO','CONFIRMADO','PENDENTE'),
+        termos_aluguel varchar(255),
+        termos_aceitos BOOLEAN DEFAULT FALSE not null,
         tipo_pagamento enum ('BOLETO','CARTAO_CREDITO','CARTAO_DEBITO','DINHEIRO','PIX'),
         validade_cartao varchar(255),
         motorista_id bigint not null,
@@ -109,7 +111,7 @@ Hibernate:
        drop index uk_acessorio_descricao
 Hibernate:
     alter table tb_acessorio
-       add constraint uk_acessorio_descricao unique (descricao)
+       add constraint uk_acessorio_descricao unique (descricao_acessorio)
 Hibernate:
     alter table tb_carro
        drop index uk_carro_placa
@@ -122,6 +124,12 @@ Hibernate:
 Hibernate:
     alter table tb_carro
        add constraint uk_carro_chassi unique (chassi)
+Hibernate:
+    alter table tb_fabricante
+       drop index uk_fabricante_nome
+Hibernate:
+    alter table tb_fabricante
+       add constraint uk_fabricante_nome unique (descricao_fabricante)
 Hibernate:
     alter table tb_funcionario
        drop index uk_funcionario_matricula

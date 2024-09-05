@@ -14,8 +14,8 @@ import static java.math.BigDecimal.ZERO;
 @Schema(description = "Dados resumidos de uma apólice de seguro para listagem.")
 public record DadosListagemApoliceSeguro(
 
-        @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor da franquia da apólice de seguro.")
+        @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         BigDecimal valorFranquia,
 
         @Schema(description = "Indica se a apólice cobre danos a terceiros.")
@@ -40,7 +40,7 @@ public record DadosListagemApoliceSeguro(
         );
     }
 
-    public DadosListagemApoliceSeguro(String s) {
+    public DadosListagemApoliceSeguro() {
         this(
                 ZERO,
                 false,

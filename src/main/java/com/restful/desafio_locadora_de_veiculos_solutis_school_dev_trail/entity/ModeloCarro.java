@@ -69,23 +69,41 @@ public class ModeloCarro {
     private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
 
     @Override
-    public String toString() {
-        return "ModeloCarro{id=" + id + ", descricao=" + descricaoModeloCarro + ", fabricante=" + fabricante + ", categoria=" + categoria + ", carros=" + carros + '}';
-    }
-
-    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
         if (thisEffectiveClass != oEffectiveClass) return false;
+
         ModeloCarro that = (ModeloCarro) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+
+        return getId() != null &&
+                Objects.equals(this.getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("ModeloCarro{");
+        sb.append("id=").append(id);
+        sb.append(", descricaoModeloCarro='").append(descricaoModeloCarro).append('\'');
+        sb.append(", fabricante=").append(fabricante.toString()); // Chama o toStringResumido() de Fabricante
+        sb.append(", categoria=").append(categoria);
+        sb.append('}');
+        return sb.toString();
     }
 }

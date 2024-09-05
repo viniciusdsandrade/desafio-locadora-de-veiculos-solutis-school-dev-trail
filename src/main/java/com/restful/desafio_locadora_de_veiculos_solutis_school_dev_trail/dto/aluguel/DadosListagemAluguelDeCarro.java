@@ -27,8 +27,8 @@ public record DadosListagemAluguelDeCarro(
         @Schema(description = "Data prevista para devolução do carro.")
         LocalDate dataDevolucaoPrevista,
 
-        @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).")
+        @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         BigDecimal valor,
 
         @Schema(description = "Dados resumidos da apólice de seguro associada ao aluguel.")

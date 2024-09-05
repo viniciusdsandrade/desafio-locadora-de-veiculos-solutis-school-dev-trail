@@ -17,6 +17,8 @@ public class FotoValidator implements ConstraintValidator<Picture, MultipartFile
     private long maxSize;
     private String[] allowedTypes;
 
+    public FotoValidator() {}
+
     @Override
     public void initialize(Picture constraintAnnotation) {
         this.maxSize = parseMaxSize(maxSizeProperty); // Usa maxSizeProperty aqui

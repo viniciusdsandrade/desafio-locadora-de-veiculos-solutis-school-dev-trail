@@ -85,6 +85,16 @@ public class CarrinhoAluguel {
     @Schema(description = "Motorista que possui o carrinho.")
     private Motorista motorista; // Motorista que possui o carrinho
 
+    // Na classe CarrinhoAluguel
+    @Column(name = "termos_aluguel")
+    @Schema(description = "Termos do aluguel aceitos pelo cliente.")
+    private String termos;
+
+    // Na classe CarrinhoAluguel
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Schema(description = "Indica se o usuário aceitou os termos do aluguel.")
+    private Boolean termosAceitos = false;
+
     @CreationTimestamp
     @Setter(NONE)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
@@ -100,5 +110,93 @@ public class CarrinhoAluguel {
         return alugueis.stream()
                 .map(Aluguel::getValorTotalFinal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (this.getClass() != o.getClass()) return false;
+
+        CarrinhoAluguel that = (CarrinhoAluguel) o;
+
+        return this.id.equals(that.id) &&
+                this.statusCarrinho == that.statusCarrinho &&
+                this.tipoPagamento == that.tipoPagamento &&
+                this.statusPagamento == that.statusPagamento &&
+                this.dataPagamento.equals(that.dataPagamento) &&
+                this.dataCancelamento.equals(that.dataCancelamento) &&
+                this.campoPix.equals(that.campoPix) &&
+                this.campoBoleto.equals(that.campoBoleto) &&
+                this.numeroCartao.equals(that.numeroCartao) &&
+                this.validadeCartao.equals(that.validadeCartao) &&
+                this.cvv.equals(that.cvv) &&
+                this.pagamentoDinheiro.equals(that.pagamentoDinheiro) &&
+                this.alugueis.equals(that.alugueis) &&
+                this.motorista.equals(that.motorista) &&
+                this.dataCreated.equals(that.dataCreated) &&
+                this.lastUpdated.equals(that.lastUpdated);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = id.hashCode();
+
+        result *= prime + statusCarrinho.hashCode();
+        result *= prime + tipoPagamento.hashCode();
+        result *= prime + statusPagamento.hashCode();
+        result *= prime + dataPagamento.hashCode();
+        result *= prime + dataCancelamento.hashCode();
+        result *= prime + campoPix.hashCode();
+        result *= prime + campoBoleto.hashCode();
+        result *= prime + numeroCartao.hashCode();
+        result *= prime + validadeCartao.hashCode();
+        result *= prime + cvv.hashCode();
+        result *= prime + pagamentoDinheiro.hashCode();
+        result *= prime + alugueis.hashCode();
+        result *= prime + motorista.hashCode();
+        result *= prime + dataCreated.hashCode();
+        result *= prime + lastUpdated.hashCode();
+
+        if (result < 0) result = -result;
+
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("CarrinhoAluguel{");
+        sb.append("id=").append(id);
+        sb.append(", statusCarrinho=").append(statusCarrinho);
+        sb.append(", tipoPagamento=").append(tipoPagamento);
+        sb.append(", statusPagamento=").append(statusPagamento);
+        sb.append(", dataPagamento=").append(dataPagamento);
+        sb.append(", dataCancelamento=").append(dataCancelamento);
+
+        if (campoPix != null) sb.append(", campoPix='").append(campoPix).append('\'');
+        if (campoBoleto != null) sb.append(", campoBoleto='").append(campoBoleto).append('\'');
+        if (numeroCartao != null) sb.append(", numeroCartao='").append(numeroCartao).append('\'');
+        if (validadeCartao != null) sb.append(", validadeCartao='").append(validadeCartao).append('\'');
+        if (cvv != null) sb.append(", cvv='").append(cvv).append('\'');
+        if (pagamentoDinheiro != null) sb.append(", pagamentoDinheiro='").append(pagamentoDinheiro).append('\'');
+
+        sb.append(", alugueis=[");
+        for (int i = 0; i < alugueis.size(); i++) {
+            sb.append(alugueis.get(i).toString()); // Chama o toStringResumido() de Aluguel
+            if (i < alugueis.size() - 1) {
+                sb.append(", ");
+            }
+        }
+
+        sb.append("]");
+
+        sb.append(", motorista=").append(motorista.toString()); // Chama o toStringResumido() de Motorista
+
+        sb.append(", dataCreated=").append(dataCreated);
+        sb.append(", lastUpdated=").append(lastUpdated);
+        sb.append(", valorTotal=").append(getValorTotal()); // Inclui o valor total
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -24,7 +24,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
         name = "tb_acessorio",
         schema = "db_locadora_veiculos",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_acessorio_descricao", columnNames = "descricao")
+                @UniqueConstraint(name = "uk_acessorio_descricao", columnNames = "descricao_acessorio")
         }
 )
 @Schema(description = "Representa um acessório de carro.")
@@ -90,23 +90,39 @@ public class Acessorio {
     }
 
     @Override
-    public String toString() {
-        return "Acessorio{id=" + id + ", descricao=" + descricaoAcessorio + '}';
-    }
-
-    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Acessorio acessorio = (Acessorio) o;
-        return getId() != null && Objects.equals(getId(), acessorio.getId());
+
+        Acessorio that = (Acessorio) o;
+
+        return getId() != null &&
+                Objects.equals(this.getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Acessorio{");
+        sb.append("id=").append(id);
+        sb.append(", descricaoAcessorio=").append(descricaoAcessorio);
+        sb.append('}');
+        return sb.toString();
     }
 }

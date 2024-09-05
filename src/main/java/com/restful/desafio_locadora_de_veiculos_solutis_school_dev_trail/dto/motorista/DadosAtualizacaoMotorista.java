@@ -8,20 +8,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
-import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 
 @Schema(description = "Dados para atualizar um motorista existente.")
 public record DadosAtualizacaoMotorista(
 
-        @NotNull(message = "ID é obrigatório")
         @Schema(description = "ID do motorista a ser atualizado.")
+        @NotNull(message = "ID é obrigatório")
         Long id,
 
         @Size(min = 3, max = 80, message = "O nome deve ter entre 3 e 80 caracteres")
@@ -29,31 +26,26 @@ public record DadosAtualizacaoMotorista(
         String nome,
 
         @JsonFormat(pattern = "dd/MM/yyyy", shape = STRING, locale = "pt-BR", timezone = "Brazil/East")
-        @Adulto(message = "Você não é maior de idade")
         @Schema(description = "Data de nascimento do motorista.")
+        @Adulto(message = "Você não é maior de idade")
         LocalDate dataNascimento,
 
-        @Column(unique = true)
-        @CPF(message = "CPF inválido")
         @Schema(description = "CPF do motorista.")
+        @CPF(message = "CPF inválido")
+        @Column(unique = true)
         String cpf,
 
-        @Column(unique = true)
-        @Email(message = "E-mail inválido")
         @Schema(description = "Endereço de email do motorista.")
+        @Email(message = "E-mail inválido")
+        @Column(unique = true)
         String email,
 
-        @Column(unique = true)
-        @CNH(message = "Número da CNH inválido")
         @Schema(description = "Número da CNH do motorista.")
+        @CNH(message = "Número da CNH inválido")
+        @Column(unique = true)
         String numeroCNH,
 
         @Schema(description = "Sexo do motorista.")
-        Sexo sexo,
-
-        @UpdateTimestamp
-        @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-        @Schema(description = "Data e hora da última atualização do registro do motorista.", accessMode = READ_WRITE)
-        LocalDateTime lastUpdated
+        Sexo sexo
 ) {
 }

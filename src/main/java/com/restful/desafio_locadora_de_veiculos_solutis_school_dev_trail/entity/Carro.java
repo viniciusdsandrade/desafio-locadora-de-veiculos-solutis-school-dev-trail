@@ -239,19 +239,24 @@ public class Carro {
     }
 
     @Override
-    public String toString() {
-        return "Carro{id=" + id + ", placa='" + placa + '\'' + ", chassi='" + chassi + '\'' + ", cor='" + cor + '\'' + ", isDisponivelParaAluguel=" + disponivel + ", valorDiaria=" + valorDiaria + ", acessorios=" + acessorios + ", modeloCarro=" + modeloCarro + ", alugueis=" + alugueis + '}';
-    }
-
-    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Carro carro = (Carro) o;
-        return getId() != null && Objects.equals(getId(), carro.getId());
+
+        Carro that = (Carro) o;
+
+        return getId() != null &&
+                Objects.equals(this.getId(), that.getId());
     }
 
     @Override
@@ -259,5 +264,42 @@ public class Carro {
         return this instanceof HibernateProxy
                 ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
                 : getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Carro{");
+        sb.append("id=").append(id);
+        sb.append(", nome='").append(nome).append('\'');
+        sb.append(", placa='").append(placa).append('\'');
+        sb.append(", chassi='").append(chassi).append('\'');
+        sb.append(", cor=").append(cor);
+        sb.append(", valorDiaria=").append(valorDiaria);
+        sb.append(", disponivel=").append(disponivel);
+
+        sb.append(", acessorios=[");
+        for (int i = 0; i < acessorios.size(); i++) {
+            sb.append(acessorios.get(i).toString()); // Chama o toStringResumido() de Acessorio
+            if (i < acessorios.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+
+        sb.append(", modeloCarro=").append(modeloCarro.toString()); // Chama o toStringResumido() de ModeloCarro
+
+        sb.append(", alugueis=[");
+        for (int i = 0; i < alugueis.size(); i++) {
+            sb.append(alugueis.get(i).toString()); // Chama o toStringResumido() de Aluguel
+            if (i < alugueis.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+
+        sb.append(", dataCreated=").append(dataCreated);
+        sb.append(", lastUpdated=").append(lastUpdated);
+        sb.append('}');
+        return sb.toString();
     }
 }

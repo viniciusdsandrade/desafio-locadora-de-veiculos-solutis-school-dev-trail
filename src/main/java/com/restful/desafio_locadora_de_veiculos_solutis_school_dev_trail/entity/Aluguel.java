@@ -115,6 +115,17 @@ public class Aluguel {
     @Schema(description = "Apólice de seguro associada ao aluguel.")
     private ApoliceSeguro apoliceSeguro; // Um aluguel precisa de uma apólice de seguro e somente uma apólice de seguro
 
+    /**
+     * Carrinho de aluguel ao qual este aluguel pertence.
+     * <p>
+     * Representa o lado "muitos" no relacionamento muitos-para-um com a entidade {@link CarrinhoAluguel}.
+     * Cada {@link Aluguel} está associado a um único {@link CarrinhoAluguel}.
+     * O atributo `carrinho_aluguel_id` na tabela `tb_aluguel` atua como chave estrangeira, referenciando
+     * a tabela `tb_carrinho_aluguel`.
+     * </p>
+     *
+     * @see CarrinhoAluguel
+     */
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "carrinho_aluguel_id")
     @Schema(description = "Carrinho de aluguel ao qual este aluguel pertence.")
@@ -165,23 +176,53 @@ public class Aluguel {
     }
 
     @Override
-    public String toString() {
-        return "Aluguel{id=" + id + ", dataPedido=" + dataPedido + ", dataRetirada=" + dataRetirada + ", dataDevolucaoPrevista=" + dataDevolucaoPrevista + ", valorTotalParcial=" + valorTotalFinal + ", motorista=" + motorista + ", carro=" + carro + ", apoliceSeguro=" + apoliceSeguro + '}';
-    }
-
-    @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Aluguel aluguel = (Aluguel) o;
-        return getId() != null && Objects.equals(getId(), aluguel.getId());
+
+        Aluguel that = (Aluguel) o;
+
+        return getId() != null &&
+                Objects.equals(this.getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Aluguel{");
+        sb.append("id=").append(id);
+        sb.append(", dataPedido=").append(dataPedido);
+        sb.append(", dataRetirada=").append(dataRetirada);
+        sb.append(", dataDevolucaoPrevista=").append(dataDevolucaoPrevista);
+        sb.append(", dataDevolucaoEfetiva=").append(dataDevolucaoEfetiva);
+        sb.append(", valorTotalInicial=").append(valorTotalInicial);
+        sb.append(", valorTotalFinal=").append(valorTotalFinal);
+        sb.append(", statusAluguel=").append(statusAluguel);
+
+        sb.append(", motorista=").append(motorista.toString()); // Chama o toString() de Motorista
+        sb.append(", carro=").append(carro.toString()); // Chama o toString() de Carro
+        sb.append(", apoliceSeguro=").append(apoliceSeguro.toString()); // Chama o toString() de ApoliceSeguro
+        sb.append(", carrinhoAluguel=").append(carrinhoAluguel.toString()); // Chama o toStringResumido() de CarrinhoAluguel
+
+        sb.append(", dataCreated=").append(dataCreated);
+        sb.append(", lastUpdated=").append(lastUpdated);
+        sb.append('}');
+        return sb.toString();
     }
 }

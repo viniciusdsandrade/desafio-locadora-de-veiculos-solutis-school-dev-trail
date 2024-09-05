@@ -78,23 +78,42 @@ public class ApoliceSeguro {
         return valorTotal;
     }
 
-    public String toString() {
-        return "ApoliceSeguro{id=" + id + ", valorFranquia=" + valorFranquia + ", protecaoTerceiro=" + protecaoTerceiro + ", protecaoCausasNaturais=" + protecaoCausasNaturais + ", protecaoRoubo=" + protecaoRoubo + ", aluguel=" + alugueis + '}';
-    }
-
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
         if (thisEffectiveClass != oEffectiveClass) return false;
+
         ApoliceSeguro that = (ApoliceSeguro) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+
+        return getId() != null && Objects.equals(this.getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("ApoliceSeguro{");
+        sb.append("id=").append(id);
+        sb.append(", valorFranquia=").append(valorFranquia);
+        sb.append(", protecaoTerceiro=").append(protecaoTerceiro);
+        sb.append(", protecaoCausasNaturais=").append(protecaoCausasNaturais);
+        sb.append(", protecaoRoubo=").append(protecaoRoubo);
+        sb.append('}');
+        return sb.toString();
     }
 }
