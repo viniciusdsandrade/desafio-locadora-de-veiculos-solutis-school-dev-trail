@@ -1,5 +1,6 @@
 package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.handler;
 
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.exception.CarroIndisponivelException;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.exception.DuplicateEntryException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityNotFoundException;
@@ -132,6 +133,35 @@ public class GlobalExceptionHandler {
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 "INVALID_ARGUMENT"
+        );
+
+        return new ResponseEntity<>(List.of(errorDetails), BAD_REQUEST);
+    }
+
+    /**
+     * Manipula a exceção {@link CarroIndisponivelException}, que é lançada quando se tenta
+     * alugar um carro que não está disponível.
+     * <p>
+     * Esta exceção indica que o carro solicitado não pode ser alugado no momento.
+     * O metodo encapsula os detalhes do erro em um objeto {@link ErrorDetails} e retorna uma
+     * resposta com status HTTP 400 (Bad Request), indicando que a requisição não pôde ser
+     * processada porque o carro não está disponível.
+     * </p>
+     *
+     * @param exception  A exceção CarroIndisponivelException, que contém a mensagem de erro a ser retornada ao cliente.
+     * @param webRequest O objeto {@link WebRequest} que fornece informações adicionais sobre a requisição que causou a exceção.
+     * @return Uma {@link ResponseEntity} contendo uma lista com os detalhes do erro encapsulados em {@link ErrorDetails}
+     * e o status HTTP 400 (Bad Request).
+     */
+    @ExceptionHandler(CarroIndisponivelException.class)
+    @Schema(description = "Manipula a exceção CarroIndisponivelException, lançada quando um carro não está disponível para aluguel.")
+    public ResponseEntity<List<ErrorDetails>> handleCarroIndisponivelException(CarroIndisponivelException exception,
+                                                                               WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                "CARRO_INDISPONIVEL"
         );
 
         return new ResponseEntity<>(List.of(errorDetails), BAD_REQUEST);

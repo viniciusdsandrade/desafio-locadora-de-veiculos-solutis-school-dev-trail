@@ -85,12 +85,10 @@ public class CarrinhoAluguel {
     @Schema(description = "Motorista que possui o carrinho.")
     private Motorista motorista; // Motorista que possui o carrinho
 
-    // Na classe CarrinhoAluguel
     @Column(name = "termos_aluguel")
     @Schema(description = "Termos do aluguel aceitos pelo cliente.")
     private String termos;
 
-    // Na classe CarrinhoAluguel
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     @Schema(description = "Indica se o usuário aceitou os termos do aluguel.")
     private Boolean termosAceitos = false;
@@ -106,9 +104,28 @@ public class CarrinhoAluguel {
     @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
 
-    public BigDecimal getValorTotal() {
+
+    public void adicionarMotorista(Motorista motorista) {
+        this.motorista = motorista;
+    }
+
+    public void adicionarAluguel(Aluguel aluguel) {
+        alugueis.add(aluguel);
+        aluguel.setCarrinhoAluguel(this);
+    }
+
+    public void removerAluguel(Aluguel aluguel) {
+        alugueis.remove(aluguel);
+        aluguel.setCarrinhoAluguel(null);
+    }
+
+    public void adicionarCarro(Carro carro) {
+        alugueis.forEach(aluguel -> aluguel.setCarro(carro));
+    }
+
+    public BigDecimal getValorTotalInicial() {
         return alugueis.stream()
-                .map(Aluguel::getValorTotalFinal)
+                .map(Aluguel::getValorTotalInicial)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -195,8 +212,10 @@ public class CarrinhoAluguel {
 
         sb.append(", dataCreated=").append(dataCreated);
         sb.append(", lastUpdated=").append(lastUpdated);
-        sb.append(", valorTotal=").append(getValorTotal()); // Inclui o valor total
+        sb.append(", valorTotalInicial=").append(getValorTotalInicial()); // Inclui o valor total
         sb.append('}');
         return sb.toString();
     }
+
+
 }

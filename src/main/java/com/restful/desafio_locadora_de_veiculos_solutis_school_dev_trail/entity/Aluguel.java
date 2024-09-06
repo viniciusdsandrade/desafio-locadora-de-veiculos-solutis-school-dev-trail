@@ -1,9 +1,11 @@
 package com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.aluguel.DadosAtualizacaoAluguel;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.enums.StatusAluguel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -19,6 +21,8 @@ import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
+import static java.time.LocalDateTime.now;
+import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.math.BigDecimal.valueOf;
@@ -142,16 +146,24 @@ public class Aluguel {
     @Schema(description = "Data e hora da última atualização do registro.", accessMode = READ_WRITE)
     private LocalDateTime lastUpdated;
 
+    public void atualizar(@Valid DadosAtualizacaoAluguel dadosAtualizacaoAluguel) {
+        ofNullable(dadosAtualizacaoAluguel.dataRetirada()).ifPresent(this::setDataRetirada);
+        ofNullable(dadosAtualizacaoAluguel.dataDevolucaoPrevista()).ifPresent(this::setDataDevolucaoPrevista);
+        ofNullable(dadosAtualizacaoAluguel.apoliceSeguro()).ifPresent(this::adicionarApoliceSeguro);
+        ofNullable(dadosAtualizacaoAluguel.emailMotorista()).ifPresent(emailMotorista -> motorista.setEmail(emailMotorista));
+        lastUpdated = now();
+    }
+
     public void adicionarApoliceSeguro(ApoliceSeguro apoliceSeguro) {
         this.apoliceSeguro = apoliceSeguro;
     }
 
-    public void adicionarCarro(Carro carro) {
-        this.carro = carro;
-    }
-
     public void adicionarMotorista(Motorista motorista) {
         this.motorista = motorista;
+    }
+
+    public void adicionarCarro(Carro carro) {
+        this.carro = carro;
     }
 
     @PostLoad

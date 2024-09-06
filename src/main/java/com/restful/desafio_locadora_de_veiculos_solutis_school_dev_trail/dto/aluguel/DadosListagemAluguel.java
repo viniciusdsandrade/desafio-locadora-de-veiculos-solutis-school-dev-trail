@@ -33,6 +33,7 @@ public record DadosListagemAluguel(
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.500,00")
         BigDecimal valorTotalPrevisto,
+        
         @JsonSerialize(using = BigDecimalCurrencySerializer.class)
         @Schema(description = "Valor total final do aluguel, formatado como moeda brasileira (R$).", example = "R$ 1.500,00")
         BigDecimal valorTotalPago,
