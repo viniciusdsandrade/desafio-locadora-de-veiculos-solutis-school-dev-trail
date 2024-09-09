@@ -39,9 +39,10 @@ public class AluguelServiceImpl implements AluguelService {
     private Aluguel existeAluguelPeloId(Long id) {
         return aluguelRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("Aluguel não encontrado pelo id: {}", id);
-                    return new EntityNotFoundException("Aluguel não encontrado.");
-                });
+                            log.error("Aluguel não encontrado pelo id: {}", id);
+                            return new EntityNotFoundException("Aluguel não encontrado.");
+                        }
+                );
     }
 
     @Override

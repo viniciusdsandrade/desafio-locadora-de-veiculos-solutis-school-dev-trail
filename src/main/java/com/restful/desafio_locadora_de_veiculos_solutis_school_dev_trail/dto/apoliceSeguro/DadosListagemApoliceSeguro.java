@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
 import static com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.ApoliceSeguro.calcularValorTotalApoliceSeguro;
-import static java.math.BigDecimal.ZERO;
 
 
 @Schema(description = "Dados resumidos de uma apólice de seguro para listagem.")
@@ -37,15 +36,6 @@ public record DadosListagemApoliceSeguro(
                 apoliceSeguro.getProtecaoTerceiro(),
                 apoliceSeguro.getProtecaoCausasNaturais(),
                 apoliceSeguro.getProtecaoRoubo()
-        );
-    }
-
-    public DadosListagemApoliceSeguro() {
-        this(
-                ZERO,
-                false,
-                false,
-                false
         );
     }
 }

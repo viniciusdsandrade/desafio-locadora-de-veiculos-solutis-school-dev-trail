@@ -19,6 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @RequestMapping("carrinhos")
 @Tag(name = "Carrinho", description = "API para gerenciar carrinhos de aluguel")
@@ -43,8 +49,8 @@ public class CarrinhoAluguelController {
             UriComponentsBuilder uriBuilder
     ) {
         CarrinhoAluguel carrinho = carrinhoAluguelService.criarCarrinhoAluguelAndAdicionarAluguel(dados);
-        var uri = uriBuilder.path("/carrinhos/{id}").buildAndExpand(carrinho.getId()).toUri();
-        return ResponseEntity.created(uri).body(carrinho);
+        URI uri = uriBuilder.path("/carrinhos/{id}").buildAndExpand(carrinho.getId()).toUri();
+        return created(uri).body(carrinho);
     }
 
     @GetMapping
@@ -55,8 +61,8 @@ public class CarrinhoAluguelController {
     public ResponseEntity<Page<DadosListagemCarrinhoAluguel>> listar(
             @PageableDefault(size = 5) Pageable paginacao
     ) {
-        var carrinhos = carrinhoAluguelService.listarCarrinhosAluguel(paginacao);
-        return ResponseEntity.ok(carrinhos);
+        Page<DadosListagemCarrinhoAluguel> carrinhos = carrinhoAluguelService.listarCarrinhosAluguel(paginacao);
+        return ok(carrinhos);
     }
 
     @GetMapping("/{id}")
@@ -67,7 +73,7 @@ public class CarrinhoAluguelController {
     })
     public ResponseEntity<DadosListagemCarrinhoAluguel> detalhar(@PathVariable Long id) {
         CarrinhoAluguel carrinho = carrinhoAluguelService.buscarCarrinhoAluguelPorId(id);
-        return ResponseEntity.ok(new DadosListagemCarrinhoAluguel(carrinho));
+        return ok(new DadosListagemCarrinhoAluguel(carrinho));
     }
 
     @PatchMapping("/{id}")
@@ -83,7 +89,7 @@ public class CarrinhoAluguelController {
             @RequestBody @Valid DadosAtualizacaoAluguel dadosAtualizacaoAluguel
     ) {
         CarrinhoAluguel carrinho = carrinhoAluguelService.atualizarAluguel(id, dadosAtualizacaoAluguel);
-        return ResponseEntity.ok(new DadosListagemCarrinhoAluguel(carrinho));
+        return ok(new DadosListagemCarrinhoAluguel(carrinho));
     }
 
     @PutMapping("/{idCarrinho}/alugueis/{idAluguel}")
@@ -95,7 +101,7 @@ public class CarrinhoAluguelController {
     })
     public ResponseEntity<DadosListagemCarrinhoAluguel> removerAluguelDoCarrinho(@PathVariable Long idCarrinho, @PathVariable Long idAluguel) {
         CarrinhoAluguel carrinho = carrinhoAluguelService.removerAluguel(idCarrinho, idAluguel); // Passe ambos os IDs para o serviço
-        return ResponseEntity.ok(new DadosListagemCarrinhoAluguel(carrinho));
+        return ok(new DadosListagemCarrinhoAluguel(carrinho));
     }
 
     @DeleteMapping("/{id}")
@@ -107,6 +113,6 @@ public class CarrinhoAluguelController {
     })
     public ResponseEntity<Void> removerCarrinho(@PathVariable Long id) {
         carrinhoAluguelService.excluirCarrinhoAluguel(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 }

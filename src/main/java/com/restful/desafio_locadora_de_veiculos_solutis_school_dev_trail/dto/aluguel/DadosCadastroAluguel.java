@@ -37,5 +37,4 @@ public record DadosCadastroAluguel(
         @NotNull(message = "O ID do carro é obrigatório.")
         Long idCarro
 ) {
-
 }

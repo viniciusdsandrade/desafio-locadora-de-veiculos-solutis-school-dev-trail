@@ -42,7 +42,9 @@ public record DadosListagemCarro(
         this(
                 carro.getNome(),
                 carro.getPlaca(),
-                carro.getModeloCarro() != null ? carro.getModeloCarro().getDescricaoModeloCarro() : null,
+                carro.getModeloCarro() != null
+                        ? carro.getModeloCarro().getDescricaoModeloCarro()
+                        : null,
                 carro.getCor(),
                 carro.getValorDiaria(),
                 carro.isDisponivel(),
@@ -53,9 +55,4 @@ public record DadosListagemCarro(
                         .collect(toList())
         );
     }
-
-    public DadosListagemCarro(String s) {
-        this(s, s, s, null, ZERO, false, List.of(s));
-    }
-
 }

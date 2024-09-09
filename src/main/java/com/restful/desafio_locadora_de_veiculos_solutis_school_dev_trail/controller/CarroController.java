@@ -4,6 +4,7 @@ import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.car
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosCadastroCarro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosDetalhamentoCarro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.carro.DadosListagemCarro;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Carro;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.service.CarroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,12 +15,17 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static org.springframework.data.domain.Sort.by;
+import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -46,9 +52,9 @@ public class CarroController {
             @RequestBody @Valid DadosCadastroCarro dadosCadastroCarro,
             UriComponentsBuilder uriBuilder
     ) {
-        var carro = carroService.cadastrarCarro(dadosCadastroCarro);
-        var uri = uriBuilder.path("/api/v1/carro/{id}").buildAndExpand(carro.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosListagemCarro(carro));
+        Carro carro = carroService.cadastrarCarro(dadosCadastroCarro);
+        URI uri = uriBuilder.path("/api/v1/carro/{id}").buildAndExpand(carro.getId()).toUri();
+        return created(uri).body(new DadosListagemCarro(carro));
     }
 
     @GetMapping("/{id}")
@@ -58,18 +64,72 @@ public class CarroController {
             @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
     })
     public ResponseEntity<DadosDetalhamentoCarro> detalhar(@PathVariable Long id) {
-        var carro = carroService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
+        Carro carro = carroService.buscarPorId(id);
+        return ok(new DadosDetalhamentoCarro(carro));
     }
 
-    @GetMapping
+    @GetMapping("/todos")
     @Operation(summary = "Listar carros", description = "Retorna uma lista paginada de carros.")
     @ApiResponse(responseCode = "200", description = "Lista de carros.")
-    public ResponseEntity<Page<DadosListagemCarro>> listar(
-            @PageableDefault(size = 5) Pageable paginacao
+    public ResponseEntity<Page<DadosListagemCarro>> listarTodos(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
-        var carros = carroService.listar(paginacao);
-        return ResponseEntity.ok(carros);
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
+        Page<DadosListagemCarro> carros = carroService.listarCarros(paginacao);
+        return ok(carros);
+    }
+
+    @GetMapping("/disponiveis")
+    @Operation(summary = "Listar carros disponíveis", description = "Retorna uma lista paginada de carros disponíveis para aluguel.")
+    @ApiResponse(responseCode = "200", description = "Lista de carros disponíveis.")
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> listarCarrosDisponiveis(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
+    ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
+        Page<DadosDetalhamentoCarro> carros = carroService.listarCarrosDisponiveis(paginacao);
+
+        return ok(carros);
+    }
+
+    @GetMapping("/alugados")
+    @Operation(summary = "Listar carros alugados", description = "Retorna uma lista paginada de carros que estão atualmente alugados.")
+    @ApiResponse(responseCode = "200", description = "Lista de carros alugados.")
+    public ResponseEntity<Page<DadosDetalhamentoCarro>> listarCarrosAlugados(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
+    ) {
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
+        Page<DadosDetalhamentoCarro> carros = carroService.listarCarrosAlugados(paginacao);
+
+        return ok(carros);
     }
 
     @GetMapping("/detalhar-completo/{id}")
@@ -79,8 +139,8 @@ public class CarroController {
             @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
     })
     public ResponseEntity<DadosDetalhamentoCarro> detalharCompleto(@PathVariable Long id) {
-        var carro = carroService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosDetalhamentoCarro(carro));
+        Carro carro = carroService.buscarPorId(id);
+        return ok(new DadosDetalhamentoCarro(carro));
     }
 
     @GetMapping("/pesquisar-and")
@@ -98,8 +158,19 @@ public class CarroController {
             @RequestParam(required = false) String fabricanteNome,
             @RequestParam(required = false) String categoriaNome,
             @RequestParam(required = false) List<String> acessoriosNomes,
-            @PageableDefault(size = 5) Pageable paginacao
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
         Page<DadosDetalhamentoCarro> carros = carroService.pesquisarCarrosAnd(
                 nome,
                 placa,
@@ -115,7 +186,7 @@ public class CarroController {
                 paginacao
         );
 
-        return ResponseEntity.ok(carros);
+        return ok(carros);
     }
 
     @GetMapping("/pesquisar-or")
@@ -133,8 +204,19 @@ public class CarroController {
             @RequestParam(required = false) String fabricanteNome,
             @RequestParam(required = false) String categoriaNome,
             @RequestParam(required = false) List<String> acessoriosNomes,
-            @PageableDefault(size = 5) Pageable paginacao
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
         Page<DadosDetalhamentoCarro> carros = carroService.pesquisarCarrosOr(
                 nome,
                 placa,
@@ -150,23 +232,7 @@ public class CarroController {
                 paginacao
         );
 
-        return ResponseEntity.ok(carros);
-    }
-
-    @GetMapping("/disponiveis")
-    @Operation(summary = "Listar carros disponíveis", description = "Retorna uma lista paginada de carros disponíveis para aluguel.")
-    @ApiResponse(responseCode = "200", description = "Lista de carros disponíveis.")
-    public ResponseEntity<Page<DadosDetalhamentoCarro>> listarCarrosDisponiveis(@PageableDefault(size = 5) Pageable paginacao) {
-        var carros = carroService.listarCarrosDisponiveis(paginacao);
-        return ResponseEntity.ok(carros);
-    }
-
-    @GetMapping("/alugados")
-    @Operation(summary = "Listar carros alugados", description = "Retorna uma lista paginada de carros que estão atualmente alugados.")
-    @ApiResponse(responseCode = "200", description = "Lista de carros alugados.")
-    public ResponseEntity<Page<DadosDetalhamentoCarro>> listarCarrosAlugados(@PageableDefault(size = 5) Pageable paginacao) {
-        var carros = carroService.listarCarrosAlugados(paginacao);
-        return ResponseEntity.ok(carros);
+        return ok(carros);
     }
 
     @PatchMapping("/{id}/bloquear")
@@ -177,7 +243,7 @@ public class CarroController {
     })
     public ResponseEntity<Void> bloquearAluguel(@PathVariable Long id) {
         carroService.bloquearCarroAluguel(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @PatchMapping("/{id}/disponibilizar")
@@ -188,7 +254,7 @@ public class CarroController {
     })
     public ResponseEntity<Void> disponibilizarAluguel(@PathVariable Long id) {
         carroService.disponibilizarCarroAluguel(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @Transactional
@@ -200,8 +266,8 @@ public class CarroController {
             @ApiResponse(responseCode = "404", description = "Carro não encontrado.")
     })
     public ResponseEntity<DadosListagemCarro> atualizar(@RequestBody @Valid DadosAtualizacaoCarro dadosAtualizacaoCarro) {
-        var carro = carroService.atualizarCarro(dadosAtualizacaoCarro);
-        return ResponseEntity.ok(new DadosListagemCarro(carro));
+        Carro carro = carroService.atualizarCarro(dadosAtualizacaoCarro);
+        return ok(new DadosListagemCarro(carro));
     }
 
     @Transactional
@@ -213,6 +279,6 @@ public class CarroController {
     })
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         carroService.excluirCarro(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 }

@@ -114,7 +114,7 @@ public class CarroServiceImpl implements CarroService {
 
     @Override
     @Schema(description = "Lista todos os carros cadastrados.")
-    public Page<DadosListagemCarro> listar(Pageable paginacao) {
+    public Page<DadosListagemCarro> listarCarros(Pageable paginacao) {
         log.info("Listando carros com paginação: {}", paginacao);
         Page<Carro> carros = carroRepository.findAll(paginacao);
         log.info("Carros encontrados: {}", carros);

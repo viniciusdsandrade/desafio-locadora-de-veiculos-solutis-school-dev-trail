@@ -4,6 +4,7 @@ import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.mot
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.motorista.DadosCadastroMotorista;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.motorista.DadosDetalhamentoMotorista;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.dto.motorista.DadosListagemMotorista;
+import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.entity.Motorista;
 import com.restful.desafio_locadora_de_veiculos_solutis_school_dev_trail.service.MotoristaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,17 +15,22 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.data.domain.Sort.by;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/v1/cliente")
@@ -50,9 +56,9 @@ public class ClienteController {
             @ModelAttribute @Valid DadosCadastroMotorista dadosCadastroMotorista,
             UriComponentsBuilder uriBuilder
     ) {
-        var motorista = motoristaService.cadastrarMotorista(dadosCadastroMotorista);
-        var uri = uriBuilder.path("/api/v1/cliente/{id}").buildAndExpand(motorista.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosListagemMotorista(motorista));
+        Motorista motorista = motoristaService.cadastrarMotorista(dadosCadastroMotorista);
+        URI uri = uriBuilder.path("/api/v1/cliente/{id}").buildAndExpand(motorista.getId()).toUri();
+        return created(uri).body(new DadosListagemMotorista(motorista));
     }
 
     @GetMapping("/{id}")
@@ -63,15 +69,70 @@ public class ClienteController {
     })
     public ResponseEntity<DadosListagemMotorista> detalhar(@PathVariable Long id) {
         var motorista = motoristaService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosListagemMotorista(motorista));
+        return ok(new DadosListagemMotorista(motorista));
     }
 
-    @GetMapping
-    @Operation(summary = "Listar clientes", description = "Retorna uma lista paginada de clientes.")
-    @ApiResponse(responseCode = "200", description = "Lista de clientes.")
-    public ResponseEntity<Page<DadosListagemMotorista>> listar(@PageableDefault(size = 20, sort = {"nome"}) Pageable paginacao) {
-        var motoristas = motoristaService.listar(paginacao);
-        return ResponseEntity.ok(motoristas);
+    @GetMapping("/todos")
+    @Operation(summary = "Listar todos os clientes", description = "Retorna uma lista paginada de todos os clientes, ativos e inativos.")
+    @ApiResponse(responseCode = "200", description = "Lista de todos os clientes.")
+    public ResponseEntity<Page<DadosListagemMotorista>> listarTodos(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
+    ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
+        Page<DadosListagemMotorista> motoristas = motoristaService.listarMotoristas(paginacao);
+        return ok(motoristas);
+    }
+
+    @GetMapping("/ativos")
+    @Operation(summary = "Listar clientes ativos", description = "Retorna uma lista paginada de clientes ativos.")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes ativos.")
+    public ResponseEntity<Page<DadosListagemMotorista>> listarAtivos(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
+    ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
+        Page<DadosListagemMotorista> motoristas = motoristaService.listarMotoristasAtivos(paginacao);
+        return ok(motoristas);
+    }
+
+    @GetMapping("/inativos")
+    @Operation(summary = "Listar clientes inativos", description = "Retorna uma lista paginada de clientes inativos.")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes inativos.")
+    public ResponseEntity<Page<DadosListagemMotorista>> listarInativos(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
+    ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
+        Page<DadosListagemMotorista> motoristas = motoristaService.listarMotoristasInativos(paginacao);
+        return ok(motoristas);
     }
 
     @GetMapping("/detalhar-completo/{id}")
@@ -81,8 +142,8 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
     })
     public ResponseEntity<DadosDetalhamentoMotorista> detalharCompleto(@PathVariable Long id) {
-        var motorista = motoristaService.buscarPorId(id);
-        return ResponseEntity.ok(new DadosDetalhamentoMotorista(motorista));
+        Motorista motorista = motoristaService.buscarPorId(id);
+        return ok(new DadosDetalhamentoMotorista(motorista));
     }
 
     @GetMapping("/pesquisar-and")
@@ -97,8 +158,19 @@ public class ClienteController {
             @RequestParam(required = false) String sexo,
             @RequestParam(required = false) Boolean ativo,
             @RequestParam(required = false) List<String> placasAlugueis,
-            @PageableDefault(size = 5) Pageable paginacao
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
         Page<DadosDetalhamentoMotorista> motoristas = motoristaService.pesquisarMotoristasAnd(
                 nome,
                 email,
@@ -111,7 +183,7 @@ public class ClienteController {
                 paginacao
         );
 
-        return ResponseEntity.ok(motoristas);
+        return ok(motoristas);
     }
 
     @GetMapping("/pesquisar-or")
@@ -126,8 +198,19 @@ public class ClienteController {
             @RequestParam(required = false) String sexo,
             @RequestParam(required = false) Boolean ativo,
             @RequestParam(required = false) List<String> placasAlugueis,
-            @PageableDefault(size = 5) Pageable paginacao
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
         Page<DadosDetalhamentoMotorista> motoristas = motoristaService.pesquisarMotoristasOr(
                 nome,
                 email,
@@ -140,7 +223,7 @@ public class ClienteController {
                 paginacao
         );
 
-        return ResponseEntity.ok(motoristas);
+        return ok(motoristas);
     }
 
     @Transactional
@@ -152,8 +235,8 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
     })
     public ResponseEntity<DadosListagemMotorista> atualizar(@RequestBody @Valid DadosAtualizacaoMotorista dadosAtualizacaoMotorista) {
-        var motorista = motoristaService.atualizarMotorista(dadosAtualizacaoMotorista);
-        return ResponseEntity.ok(new DadosListagemMotorista(motorista));
+        Motorista motorista = motoristaService.atualizarMotorista(dadosAtualizacaoMotorista);
+        return ok(new DadosListagemMotorista(motorista));
     }
 
     @Transactional
@@ -165,7 +248,7 @@ public class ClienteController {
     })
     public ResponseEntity<Void> desativar(@PathVariable Long id) {
         motoristaService.desativarMotorista(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @Transactional
@@ -177,7 +260,7 @@ public class ClienteController {
     })
     public ResponseEntity<Void> ativar(@PathVariable Long id) {
         motoristaService.ativarMotorista(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @Transactional
@@ -189,6 +272,6 @@ public class ClienteController {
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         motoristaService.deletarMotorista(id);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 }

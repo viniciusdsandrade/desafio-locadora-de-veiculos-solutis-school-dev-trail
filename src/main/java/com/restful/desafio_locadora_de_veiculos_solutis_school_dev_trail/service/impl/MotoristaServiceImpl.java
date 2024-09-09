@@ -145,11 +145,27 @@ public class MotoristaServiceImpl implements MotoristaService {
     }
 
     @Override
-    @Schema(description = "Lista motoristas com paginação.")
-    public Page<DadosListagemMotorista> listar(Pageable paginacao) {
-        log.info("Listando motoristas com paginação: {}", paginacao);
+    public Page<DadosListagemMotorista> listarMotoristasInativos(Pageable paginacao) {
+        log.info("Listando motoristas inativos com paginação: {}", paginacao);
+        Page<Motorista> motoristas = motoristaRepository.findAllByAtivoFalse(paginacao);
+        log.info("Motoristas inativos listados com sucesso: {}", motoristas);
+        return motoristas.map(DadosListagemMotorista::new);
+    }
+
+    @Override
+    public Page<DadosListagemMotorista> listarMotoristas(Pageable paginacao) {
+        log.info("Listando todos os motoristas com paginação: {}", paginacao);
+        Page<Motorista> motoristas = motoristaRepository.findAll(paginacao);
+        log.info("Todos os motoristas listados com sucesso: {}", motoristas);
+        return motoristas.map(DadosListagemMotorista::new);
+    }
+
+    @Override
+    @Schema(description = "Lista todos os motoristas ativos com paginação.")
+    public Page<DadosListagemMotorista> listarMotoristasAtivos(Pageable paginacao) {
+        log.info("Listando motoristas ativos com paginação: {}", paginacao);
         Page<Motorista> motoristas = motoristaRepository.findAllByAtivoTrue(paginacao);
-        log.info("Motoristas listados com sucesso: {}", motoristas);
+        log.info("Motoristas ativos listados com sucesso: {}", motoristas);
         return motoristas.map(DadosListagemMotorista::new);
     }
 

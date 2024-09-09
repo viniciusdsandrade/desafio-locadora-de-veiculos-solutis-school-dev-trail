@@ -41,7 +41,7 @@ public interface CarroService {
     void bloquearCarroAluguel(Long id);
 
     @Schema(description = "Lista os carros cadastrados.")
-    Page<DadosListagemCarro> listar(Pageable paginacao);
+    Page<DadosListagemCarro> listarCarros(Pageable paginacao);
 
     @Schema(description = "Lista os carros disponíveis para aluguel.")
     Page<DadosDetalhamentoCarro> listarCarrosDisponiveis(Pageable paginacao);

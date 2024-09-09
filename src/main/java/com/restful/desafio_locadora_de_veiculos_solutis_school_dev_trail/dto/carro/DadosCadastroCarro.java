@@ -32,10 +32,10 @@ public record DadosCadastroCarro(
         @Schema(description = "Cor do carro.")
         Cor cor,
 
-        @DecimalMax(value = "9,999,999.99", message = "O valorTotalParcial diário deve ser menor que R$ 9.999.999,00")
-        @DecimalMin(value = "0.0", inclusive = false, message = "O valorTotalParcial diário deve ser maior que zero")
+        @DecimalMax(value = "9999999.99", message = "O valorTotalParcial diário deve ser menor que R$ 9.999.999,00")
+        @DecimalMin(value = "0.00", inclusive = false, message = "O valorTotalParcial diário deve ser maior que zero")
         @NotNull(message = "O valorTotalParcial diário do aluguel é obrigatório")
-        @Schema(description = "Valor da diária do aluguel do carro.")
+        @Schema(description = "Valor da diária do aluguel do carro.", type = "number", format = "#,##0.00")
         BigDecimal valorDiario,
 
         @NotNull(message = "A lista de acessórios não pode ser nula")

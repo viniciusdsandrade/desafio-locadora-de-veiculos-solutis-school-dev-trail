@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.data.domain.PageRequest.of;
+import static org.springframework.data.domain.Sort.by;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/v1/aluguel")
@@ -52,8 +54,19 @@ public class AluguelController {
             @RequestParam(required = false) BigDecimal valorTotalFinalMax,
             @RequestParam(required = false) List<String> emailsMotoristas,
             @RequestParam(required = false) List<String> placasCarros,
-            @PageableDefault(size = 5) Pageable paginacao
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
         Page<DadosListagemAluguel> alugueis = aluguelService.pesquisarAlugueisAnd(
                 statusAluguel,
                 dataPedidoInicio,
@@ -73,7 +86,7 @@ public class AluguelController {
                 paginacao
         );
 
-        return ResponseEntity.ok(alugueis);
+        return ok(alugueis);
     }
 
     @GetMapping("/pesquisar-or")
@@ -95,8 +108,19 @@ public class AluguelController {
             @RequestParam(required = false) BigDecimal valorTotalFinalMax,
             @RequestParam(required = false) List<String> emailsMotoristas,
             @RequestParam(required = false) List<String> placasCarros,
-            @PageableDefault(size = 5) Pageable paginacao
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "sort", required = false, defaultValue = "id") String sort
     ) {
+
+        if (limit != null && offset != null) {
+            page = offset / limit;
+            size = limit;
+        }
+
+        Pageable paginacao = of(page, size, by(sort));
         Page<DadosListagemAluguel> alugueis = aluguelService.pesquisarAlugueisOr(
                 statusAluguel,
                 dataPedidoInicio,
@@ -116,6 +140,6 @@ public class AluguelController {
                 paginacao
         );
 
-        return ResponseEntity.ok(alugueis);
+        return ok(alugueis);
     }
 }
