@@ -1,5 +1,7 @@
 USE db_locadora_veiculos;
 
+SELECT * FROM tb_carro;
+
 INSERT INTO tb_acessorio (descricao_acessorio)VALUES ('GPS');
 INSERT INTO tb_acessorio (descricao_acessorio) VALUES ('AR_CONDICIONADO');
 INSERT INTO tb_acessorio (descricao_acessorio) VALUES ('CADEIRA_INFANTIL');

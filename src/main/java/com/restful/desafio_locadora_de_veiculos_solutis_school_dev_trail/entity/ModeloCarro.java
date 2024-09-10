@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.NONE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
@@ -63,7 +64,7 @@ public class ModeloCarro {
      * sejam removidos do banco de dados.
      * </p>
      */
-    @OneToMany(mappedBy = "modeloCarro", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "modeloCarro", cascade = ALL, orphanRemoval = true, fetch = LAZY)
     @Setter(NONE)
     @Schema(description = "Lista de carros específicos deste modelo.")
     private List<Carro> carros = new ArrayList<>(); // Inicializa a lista, pois a entidade não depende de carro para existir
@@ -86,7 +87,7 @@ public class ModeloCarro {
         ModeloCarro that = (ModeloCarro) o;
 
         return getId() != null &&
-                Objects.equals(this.getId(), that.getId());
+               Objects.equals(this.getId(), that.getId());
     }
 
     @Override

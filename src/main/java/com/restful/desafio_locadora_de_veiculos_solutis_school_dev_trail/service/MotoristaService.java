@@ -40,14 +40,14 @@ public interface MotoristaService {
     @Schema(description = "Ativa um motorista.")
     void ativarMotorista(Long id);
 
-    @Schema(description = "Lista todos os motoristas inativos.")
-    Page<DadosListagemMotorista> listarMotoristasInativos(Pageable paginacao);
-
     @Schema(description = "Lista todos os motoristas cadastrados.")
     Page<DadosListagemMotorista> listarMotoristas(Pageable paginacao);
 
     @Schema(description = "Lista todos os motoristas ativos.")
     Page<DadosListagemMotorista> listarMotoristasAtivos(Pageable paginacao);
+
+    @Schema(description = "Lista todos os motoristas inativos.")
+    Page<DadosListagemMotorista> listarMotoristasInativos(Pageable paginacao);
 
     @Schema(description = "Pesquisa motoristas com base nos filtros informados, usando junção AND.")
     Page<DadosDetalhamentoMotorista> pesquisarMotoristasAnd(

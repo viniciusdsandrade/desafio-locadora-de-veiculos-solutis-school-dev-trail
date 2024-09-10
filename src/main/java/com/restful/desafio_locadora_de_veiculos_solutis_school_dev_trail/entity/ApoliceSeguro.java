@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.math.BigDecimal.ZERO;
 
@@ -60,7 +61,7 @@ public class ApoliceSeguro {
      *
      * @see Aluguel
      */
-    @OneToMany(mappedBy = "apoliceSeguro", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "apoliceSeguro", cascade = ALL, orphanRemoval = true, fetch = LAZY)
     @Schema(description = "Aluguéis associados a esta apólice de seguro.")
     private List<Aluguel> alugueis = new ArrayList<>();
 

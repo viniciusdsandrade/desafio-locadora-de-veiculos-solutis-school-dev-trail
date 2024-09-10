@@ -49,9 +49,8 @@ public class Motorista extends Pessoa {
      *
      * @see Aluguel
      */
-    @OneToMany(mappedBy = "motorista", fetch = LAZY, cascade = ALL, orphanRemoval = true)
-
     @Setter(NONE)
+    @OneToMany(mappedBy = "motorista", fetch = LAZY, cascade = ALL, orphanRemoval = true)
     @Schema(description = "Lista de aluguéis realizados pelo motorista.")
     private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um motorista pode não ter aluguéis associados
 

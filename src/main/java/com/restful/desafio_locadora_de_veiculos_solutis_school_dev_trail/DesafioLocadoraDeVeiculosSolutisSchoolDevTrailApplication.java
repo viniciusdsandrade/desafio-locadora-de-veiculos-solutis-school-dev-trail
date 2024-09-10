@@ -32,7 +32,7 @@ public class DesafioLocadoraDeVeiculosSolutisSchoolDevTrailApplication {
             File flagFile = new File("src/main/resources/.data_initialized");
             if (!flagFile.exists()) {
                 try {
-                    String sqlScript = new String(readAllBytes(get(vini_path_desktop)));
+                    String sqlScript = new String(readAllBytes(get(vini_path_notebook)));
 
                     String[] sqlCommands = sqlScript.split(";");
 

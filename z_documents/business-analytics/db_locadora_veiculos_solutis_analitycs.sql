@@ -12,15 +12,15 @@ SELECT * FROM tb_pessoa;
 SELECT * FROM tb_carro_acessorio;
 
 -- Faça uma consulta que pegue o nome do carro e nome dos acessórios
-SELECT c.nome AS nome_carro, a.descricao_acessorio AS nome_acessorio
+SELECT c.nome AS nome_carro, a.descricao AS nome_acessorio
 FROM tb_carro c
          JOIN tb_carro_acessorio ca ON c.id = ca.id_carro
          JOIN tb_acessorio a ON ca.id_acessorio = a.id;
 
 -- Faça uma consulta que mostre quantas cada acessório foi associado a um carro
-SELECT a.descricao_acessorio AS nome_acessorio, COUNT(ca.id_acessorio) AS quantidade
+SELECT a.descricao AS nome_acessorio, COUNT(ca.id_acessorio) AS quantidade
 FROM tb_acessorio a
          JOIN tb_carro_acessorio ca ON a.id = ca.id_acessorio
-GROUP BY a.descricao_acessorio
+GROUP BY a.descricao
 ORDER BY quantidade DESC;
 

@@ -20,35 +20,40 @@ public interface CarroRepository extends JpaRepository<Carro, Long>, JpaSpecific
     @Schema(description = "Verifica se existe um carro com o chassi informado.")
     boolean existsByChassi(String chassi);
 
-    @Schema(description = "Busca todos os carros.")
-    @Query(value = "SELECT c " +
+    @Query(value = "SELECT DISTINCT c " +
                    "FROM Carro c " +
-                   "JOIN FETCH c.acessorios " +
-                   "JOIN FETCH c.modeloCarro",
-            countQuery = "SELECT COUNT(c) " +
-                         "FROM Carro c")
+                   "LEFT JOIN FETCH c.modeloCarro mc " +
+                   "LEFT JOIN FETCH mc.fabricante " +
+                   "LEFT JOIN FETCH c.acessorios " +
+                   "WHERE c IN (SELECT c2 FROM Carro c2 LEFT JOIN c2.alugueis)",
+            countQuery = "SELECT COUNT(DISTINCT c) " +
+                         "FROM Carro c " +
+                         "LEFT JOIN c.alugueis")
+    @Schema(description = "Busca todos os carros.")
     @NotNull
     Page<Carro> findAll(@NotNull Pageable paginacao);
 
-    @Schema(description = "Busca um carro pela placa.")
-    @Query(value = "SELECT c " +
+    @Query(value = "SELECT DISTINCT c " +
                    "FROM Carro c " +
-                   "JOIN FETCH c.acessorios " +
-                   "JOIN FETCH c.modeloCarro " +
-                   "WHERE c.disponivel = true",
-            countQuery = "SELECT COUNT(c) " +
+                   "LEFT JOIN FETCH c.modeloCarro mc " +
+                   "LEFT JOIN FETCH mc.fabricante " +
+                   "LEFT JOIN FETCH c.acessorios " +
+                   "WHERE c.disponivel = true AND c IN (SELECT c2 FROM Carro c2 LEFT JOIN c2.alugueis)",
+            countQuery = "SELECT COUNT(DISTINCT c) " +
                          "FROM Carro c " +
+                         "LEFT JOIN c.alugueis " +
                          "WHERE c.disponivel = true")
     Page<Carro> findAllByDisponivelTrue(Pageable pageable);
 
-    @Schema(description = "Busca um carro pelo chassi.")
-    @Query(value = "SELECT c " +
+    @Query(value = "SELECT DISTINCT c " +
                    "FROM Carro c " +
-                   "JOIN FETCH c.acessorios " +
-                   "JOIN FETCH c.modeloCarro " +
-                   "WHERE c.disponivel = false",
-            countQuery = "SELECT COUNT(c) " +
+                   "LEFT JOIN FETCH c.modeloCarro mc " +
+                   "LEFT JOIN FETCH mc.fabricante " +
+                   "LEFT JOIN FETCH c.acessorios " +
+                   "WHERE c.disponivel = false AND c IN (SELECT c2 FROM Carro c2 LEFT JOIN c2.alugueis)",
+            countQuery = "SELECT COUNT(DISTINCT c) " +
                          "FROM Carro c " +
+                         "LEFT JOIN c.alugueis " +
                          "WHERE c.disponivel = false")
     Page<Carro> findAllByDisponivelFalse(Pageable paginacao);
 }

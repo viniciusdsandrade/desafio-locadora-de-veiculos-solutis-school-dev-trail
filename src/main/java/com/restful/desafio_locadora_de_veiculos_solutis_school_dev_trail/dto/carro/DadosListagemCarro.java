@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static java.math.BigDecimal.ZERO;
+
 import static java.util.stream.Collectors.toList;
 
 @Schema(description = "Dados resumidos de um carro para listagem.")

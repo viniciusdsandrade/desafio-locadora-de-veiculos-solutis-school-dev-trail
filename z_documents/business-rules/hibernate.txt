@@ -34,21 +34,13 @@ Hibernate:
 Hibernate:
     create table tb_carrinho_aluguel (
         id bigint not null auto_increment,
-        campo_boleto varchar(255),
-        campo_pix varchar(255),
-        cvv varchar(255),
         data_cancelamento date,
         data_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
-        data_pagamento date,
         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
-        numero_cartao varchar(255),
-        pagamento_dinheiro varchar(255),
         status_carrinho enum ('ABERTO','FECHADO'),
-        status_pagamento enum ('CANCELADO','CONFIRMADO','PENDENTE'),
         termos_aluguel varchar(255),
         termos_aceitos BOOLEAN DEFAULT FALSE not null,
-        tipo_pagamento enum ('BOLETO','CARTAO_CREDITO','CARTAO_DEBITO','DINHEIRO','PIX'),
-        validade_cartao varchar(255),
+        metodo_pagamento_id bigint,
         motorista_id bigint not null,
         primary key (id)
     ) engine=InnoDB
@@ -77,6 +69,22 @@ Hibernate:
         matricula varchar(255) not null,
         pessoa_id bigint not null,
         primary key (pessoa_id)
+    ) engine=InnoDB
+Hibernate:
+    create table tb_metodo_pagamento (
+        id bigint not null auto_increment,
+        campo_boleto varchar(255),
+        campo_pix varchar(255),
+        cvv varchar(255),
+        data_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+        data_pagamento date,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null,
+        numero_cartao varchar(255),
+        pagamento_dinheiro varchar(255),
+        status_pagamento enum ('CANCELADO','CONFIRMADO','PENDENTE'),
+        tipo_pagamento enum ('BOLETO','CARTAO_CREDITO','CARTAO_DEBITO','DINHEIRO','PIX'),
+        validade_cartao varchar(255),
+        primary key (id)
     ) engine=InnoDB
 Hibernate:
     create table tb_modelo_carro (
@@ -112,6 +120,12 @@ Hibernate:
 Hibernate:
     alter table tb_acessorio
        add constraint uk_acessorio_descricao unique (descricao_acessorio)
+Hibernate:
+    alter table tb_carrinho_aluguel
+       drop index UKp0s2amqc1ek8vrs08rk11x69q
+Hibernate:
+    alter table tb_carrinho_aluguel
+       add constraint UKp0s2amqc1ek8vrs08rk11x69q unique (metodo_pagamento_id)
 Hibernate:
     alter table tb_carro
        drop index uk_carro_placa
@@ -179,6 +193,11 @@ Hibernate:
        add constraint FKf1bcfn2heg58msxn2k2sj0gef
        foreign key (motorista_id)
        references tb_motorista (pessoa_id)
+Hibernate:
+    alter table tb_carrinho_aluguel
+       add constraint FKgea05qpcuo05fithyuc67jhcr
+       foreign key (metodo_pagamento_id)
+       references tb_metodo_pagamento (id)
 Hibernate:
     alter table tb_carrinho_aluguel
        add constraint FK2jugci133cw5226v7xos9snva

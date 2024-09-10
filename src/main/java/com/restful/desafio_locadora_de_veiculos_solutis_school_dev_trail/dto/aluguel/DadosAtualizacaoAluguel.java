@@ -11,7 +11,7 @@ import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 
 public record DadosAtualizacaoAluguel(
 
-        @NotNull
+        @NotNull(message = "O ID do aluguel é obrigatório.")
         @Schema(description = "ID do aluguel a ser atualizado.")
         Long idAluguel,
 

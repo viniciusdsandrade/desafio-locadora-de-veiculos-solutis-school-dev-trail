@@ -22,6 +22,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static java.lang.String.valueOf;
@@ -106,7 +107,7 @@ public class Carro {
      * </p>
      */
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = LAZY)
     @Column(nullable = false)
     @Setter(NONE)
     @JoinTable(name = "tb_carro_acessorio", joinColumns = @JoinColumn(name = "id_carro"), inverseJoinColumns = @JoinColumn(name = "id_acessorio"))
@@ -133,7 +134,7 @@ public class Carro {
      *
      * @see ModeloCarro
      */
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "modelo_carro_id", nullable = false)
     @Schema(description = "Modelo do carro.")
     private ModeloCarro modeloCarro;
@@ -158,10 +159,10 @@ public class Carro {
      *
      * @see Aluguel
      */
-    @OneToMany(mappedBy = "carro", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "carro", cascade = ALL, orphanRemoval = true, fetch = LAZY)
     @Setter(NONE)
     @Schema(description = "Lista de aluguéis associados a este carro.")
-    private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia pois um carro pode não ter aluguéis associados
+    private List<Aluguel> alugueis = new ArrayList<>(); // Inicializa a lista de aluguéis com uma lista vazia, pois um carro pode não ter aluguéis associados
 
     @CreationTimestamp
     @Setter(NONE)

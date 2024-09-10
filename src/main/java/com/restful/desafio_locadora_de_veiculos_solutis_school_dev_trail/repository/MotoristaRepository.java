@@ -25,7 +25,7 @@ public interface MotoristaRepository extends JpaRepository<Motorista, Long>, Jpa
     @Schema(description = "Verifica se existe um motorista com o número da CNH informado.")
     boolean existsByNumeroCNH(String numeroCNH);
 
-    @Schema(description = "Busca um motorista pelo CPF.")
+    @Schema(description = "Busca um motorista pelo Email.")
     Optional<Motorista> findByEmail(String email);
 
     @Schema(description = "Busca todos os motoristas ativos.")
